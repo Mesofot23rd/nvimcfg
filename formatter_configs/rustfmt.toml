@@ -1,0 +1,3 @@
+brace_style = "AlwaysNextLine"
+indent_style = "Spaces"
+indent_size = 4

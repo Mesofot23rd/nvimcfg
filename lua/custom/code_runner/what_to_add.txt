@@ -1,0 +1,14 @@
+-a way to detect a makefile in the build directory ${cwd}/build/makefile
+
+
+-a way to run the executable for bau options[
+   get the executale name and the path to the executable
+
+   opt1. Run target{ if target doesnt exist _notify:"target not BUILT yet!"}
+   opt2. Build and Run Target
+]
+
+
+-what to change:
+1.build any thing{}
+
