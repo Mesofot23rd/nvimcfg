@@ -170,6 +170,7 @@ map('n', 'O', "printf('m`%sO<ESC>``', v:count1)", {
 ---------------------------------------------------------------------------------------------------------------
 --CUSTOM_UTILS MAPPINGS
 local utils = require 'custom.utils'
+local config_update = require 'config.update'
 
 local function start_search_and_replace()
   require('custom.search').start()
@@ -183,6 +184,7 @@ map('n', '<leader>un', utils.toggle_notifications, { desc = 'Toggle notification
 map('n', '<leader>ul', utils.toggle_line_numbers, { desc = 'Toggle line numbers' }) --Toggle line numbers
 map('n', '<leader>uL', utils.toggle_statusline, { desc = 'Toggle statusline' }) --Toggle laststatus=3|2|0
 map('n', '<leader>uu', utils.toggle_url_hl, { desc = 'Toggle URL highlight' }) --Toggle URL highlight
+map('n', '<leader>cu', config_update.check, { desc = 'Update Neovim config' })
 
 map('n', '<C-f>', start_search_and_replace, { desc = 'Search and replace' })
 map('n', '<M-f>', start_search_and_replace, { desc = 'Search and replace' })
