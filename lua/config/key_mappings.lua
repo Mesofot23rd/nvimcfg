@@ -110,7 +110,7 @@ end, {
 --   end
 -- end) -- close buffer without closing the window
 
-map({ 'n', 'i' }, '<C-x>', '<Cmd>bprevious <bar> bdelete #<CR>') -- close buffer without closing the window
+-- map({ 'n', 'i' }, '<C-x>', '<Cmd>bprevious <bar> bdelete #<CR>') -- close buffer without closing the window
 map({ 'n', 'i', 't' }, '<C-n>', '<Cmd> new <CR>') -- create new buffer
 
 ----------------------------------------------------------------------------------------------------------------

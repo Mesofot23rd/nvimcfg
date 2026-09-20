@@ -8,6 +8,7 @@ return {
     vim.o.timeoutlen = 300
   end,
   opts = {
+    -- Document existing key chains
     spec = {
       -- { '<leader>a', group = '[A]I' },
       { '<leader>b', group = '[B]uffer' },
@@ -20,10 +21,9 @@ return {
       -- { '<leader>p', group = '[P]roject' },
 
       { '<leader>r', group = '[R]unCode' },
-      { '<leader>R', group = '[R]unHtml' },
 
       -- { '<leader>S', group = '[S]ession' },
-      -- { '<leader>t', group = '[T]erminal' },
+      { '<leader>--[[ t ]]', group = '[T]erminal' },
       { '<leader>u', group = '[U]I/UX' },
       { '<leader>w', group = '[W]indow' },
 

@@ -1,21 +1,36 @@
 --Setup Lazy
 local is_vscode = vim.g.vscode ~= nil
--- local is_android=vim.g.v
+local is_android = vim.fn.has 'Android'
 
 local specs
 
+--PLUGINS TO LOAD WHEN USING NEOVIM INSIDE VSCODE
 if is_vscode then
   specs = { { import = 'pluginz.lsp' } }
--- if is_android then
--- specs = {}
-else
+--PLUGINS TO LOAD WHEN USING NEOVIM ON ANDROID
+elseif is_android == 1 then
   specs = {
-    { import = 'pluginz.lsp' },
-    { import = 'pluginz.editor' },
+    { import = 'pluginz.dev.git' },
+
+    { import = 'pluginz.editor.indent_line' },
+    { import = 'pluginz.editor.rainbow_brackets' },
+    { import = 'pluginz.editor.todo_comments' },
+
     { import = 'pluginz.editing_enhancement' },
     { import = 'pluginz.dev' },
     { import = 'pluginz.extra' },
-    { import = 'pluginz.lsp.auto-completion' },
+    { import = 'pluginz.lsp' },
+    { import = 'pluginz.navigation' },
+    { import = 'pluginz.ui' },
+  }
+--PLUGINS TO LOAD WHEN USING NEOVIM ON LINUX/WINDOWS WSL
+else
+  specs = {
+    { import = 'pluginz.dev' },
+    { import = 'pluginz.editor' },
+    { import = 'pluginz.editing_enhancement' },
+    { import = 'pluginz.extra' },
+    { import = 'pluginz.lsp' },
     { import = 'pluginz.navigation' },
     { import = 'pluginz.ui' },
   }

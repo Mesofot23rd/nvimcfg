@@ -47,6 +47,18 @@ vim.opt.smartindent = true -- Make indenting smarter again (default: false)
 vim.opt.showtabline = 2 -- Always show tabs (default: 1)
 vim.opt.breakindent = true -- Enable break indent (default: false)
 
+-- vim.opt.cino:append("N-s") -- no namespace indent
+vim.opt.cino:append ':0' -- case: indent
+vim.opt.cino:append 'g0' -- public: indent
+vim.opt.cino:append 't0' -- function return declaration
+
+-- enable partial c++11 (lambda) support
+vim.opt.cino:append 'j1'
+vim.opt.cino:append '(0' -- unclosed prarntheses
+vim.opt.cino:append 'ws'
+vim.opt.cino:append 'Ws'
+vim.opt.formatoptions:remove 't' -- don't auto-indent plaintext
+
 -- Search
 -- o.incsearch = true
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search (default: false)
@@ -56,6 +68,7 @@ vim.opt.hlsearch = false -- Set highlight on search (default: true)
 -- Files
 vim.opt.swapfile = false -- Creates a swapfile (default: true)
 vim.bo.autoread = true
+vim.opt.undofile = true -- Save undo history (default: false)
 
 -- Splits
 vim.opt.splitbelow = true -- Force all horizontal splits to go below current window (default: false)
@@ -88,7 +101,6 @@ vim.opt.timeoutlen = 300 -- Time to wait for a mapped sequence to complete (in m
 
 vim.opt.backup = false -- Creates a backup file (default: false)
 vim.opt.writebackup = false -- If a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited (default: true)
-vim.opt.undofile = true -- Save undo history (default: false)
 
 -- prevent the built-in vim.lsp.completion autotrigger from selecting the first item
 vim.opt.completeopt = { 'menuone', 'noselect', 'popup' }
@@ -133,3 +145,12 @@ vim.opt.sessionoptions = {
 vim.opt.inccommand = 'split' -- Preview substitutions live
 vim.opt.lazyredraw = false -- Enable lazyredraw for smoother updates
 vim.opt.hidden = true -- enable background buffers
+
+--- disalble providers ---------------------------------------------------------
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_node_provider = 0
+
+-- INFO: Commented out to use the default shell (vim.env.SHELL)
+-- vim.opt.shell = "/bin/zsh"

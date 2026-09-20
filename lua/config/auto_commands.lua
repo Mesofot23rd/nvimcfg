@@ -1,8 +1,15 @@
 local autocmd = vim.api.nvim_create_autocmd
 
+--- augroup helper function ----------------------------------------------------
+
+-- local function augroup(name, opts)
+--   opts = opts or { clear = true }
+--   return vim.api.nvim_create_augroup('scratch_' .. name, opts)
+-- end
+
 ---------------------------------------------------------------------------------
 ---- MAKE SPECIAL BUFFERS "UNLISTED" AND PREVENT THEM FROM BEING REPLACED:
-vim.api.nvim_create_autocmd('BufEnter', {
+autocmd('BufEnter', {
   pattern = { 'term://*', 'qf', 'help', 'oil://*', 'copilot-*' },
   callback = function()
     vim.bo.buflisted = false
@@ -13,17 +20,12 @@ vim.api.nvim_create_autocmd('BufEnter', {
 ---------------------------------------------------------------------------------
 ---- RESTORE_CURSOR
 autocmd('BufReadPost', {
-  desc = 'Restore last cursor position when opening a file',
   callback = function(args)
     local buf = args.buf
-    if vim.b[buf].last_loc_restored or vim.tbl_contains({ 'gitcommit' }, vim.bo[buf].filetype) then
-      return
-    end
+    if vim.b[buf].last_loc_restored or vim.tbl_contains({ 'gitcommit' }, vim.bo[buf].filetype) then return end
     vim.b[buf].last_loc_restored = true
     local mark = vim.api.nvim_buf_get_mark(buf, '"')
-    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(buf) then
-      pcall(vim.api.nvim_win_set_cursor, 0, mark)
-    end
+    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(buf) then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
   end,
 })
 
@@ -31,9 +33,7 @@ autocmd('BufReadPost', {
 ----SESSION AND COLORSCHEME RESTORE
 autocmd('UIEnter', {
   callback = function()
-    if vim.fn.argc() == 0 then
-      require('persistence').load()
-    end
+    if vim.fn.argc() == 0 then require('persistence').load() end
     require('custom.colorscheme_persist').load()
     require('custom.bg_change').load_bg()
   end,
@@ -53,18 +53,14 @@ autocmd('ColorScheme', {
 ---- HELP WINDOW LEFT
 autocmd('FileType', {
   pattern = 'help',
-  callback = function()
-    vim.cmd 'wincmd L'
-  end,
+  callback = function() vim.cmd 'wincmd L' end,
 })
 
 ---------------------------------------------------------------------------------
 ---- CLOSE THE FOLLOWING PATTERN WITH `Q`
 autocmd('FileType', {
-  pattern = { 'qf', 'help', 'man', 'lspinfo' },
-  callback = function()
-    vim.keymap.set('n', 'q', ':close<CR>', { noremap = true, silent = true })
-  end,
+  pattern = { 'checkhealth', 'qf', 'help', 'man', 'lspinfo' },
+  callback = function() vim.keymap.set('n', 'q', ':close<CR>', { noremap = true, silent = true }) end,
 })
 
 ---------------------------------------------------------------------------------
@@ -79,10 +75,9 @@ autocmd('User', {
       -- return buftype == 'terminal'
 
       local ft = vim.api.nvim_get_option_value('filetype', { buf = buf })
-      local ft_exclude = { 'neo-tree', 'aerial', 'trouble', 'qf', 'help', 'lazy', 'man', 'lspinfo', 'notify', 'terminal' }
-      if vim.tbl_contains(ft_exclude, ft) then
-        vim.api.nvim_win_close(win, true)
-      end
+      local ft_exclude =
+        { 'neo-tree', 'aerial', 'trouble', 'qf', 'help', 'lazy', 'man', 'lspinfo', 'notify', 'terminal' }
+      if vim.tbl_contains(ft_exclude, ft) then vim.api.nvim_win_close(win, true) end
     end
   end,
 })
@@ -92,9 +87,12 @@ autocmd('User', {
 autocmd('FileType', {
   pattern = { 'c', 'cpp' },
   callback = function()
-    vim.keymap.set('n', 'T', function()
-      require('custom.header_switch').toggle()
-    end, { buffer = true, desc = 'Toggle between header and implementation' })
+    vim.keymap.set(
+      'n',
+      'T',
+      function() require('custom.header_switch').toggle() end,
+      { buffer = true, desc = 'Toggle between header and implementation' }
+    )
   end,
 })
 
@@ -102,9 +100,7 @@ autocmd('FileType', {
 ---- DISABLE AUTO-COMMENT ON NEW LINE
 autocmd('FileType', {
   pattern = '*',
-  callback = function()
-    vim.opt_local.formatoptions:remove { 'r', 'o' }
-  end,
+  callback = function() vim.opt_local.formatoptions:remove { 'r', 'o' } end,
 })
 
 -- Effect: URL underline.

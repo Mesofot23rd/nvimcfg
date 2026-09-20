@@ -20,8 +20,8 @@ end
 function M.get_os_icon()
   -- print(sysname)
 
-  -- local sysname = vim.loop.os_uname().sysname
-  local sysname = vim.uv.os_gethostname()
+  local sysname = vim.uv.os_uname().sysname
+  -- local sysname = vim.uv.os_gethostname()
 
   if sysname:match 'Darwin' then
     return ''
@@ -34,13 +34,8 @@ function M.get_os_icon()
   elseif sysname:match 'Linux' then
     local release = vim.loop.os_uname().release
 
-    local handle = io.popen 'uname -o'
-    local os = handle:read '*a'
-
-    handle:close()
-
     if release:lower():match 'arch' then return '' end
-    if os == 'Android' then return '󱚟' end
+    if vim.fn.has 'Android' == 1 then return '󱚟' end
 
     return ''
   else

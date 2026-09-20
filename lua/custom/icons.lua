@@ -20,27 +20,23 @@ return {
   tree = { vertical = '│ ', middle = '├╴', last = '└╴' },
   undo = { saved = ' ' },
   diagnostics1 = {
-    error = '', -- nf-fa-times \uf00d
-    warning = '', -- nf-fa-warning \uf071
-    info = '', -- nf-fa-info_circle \uf05a
-    hint = '', -- nf-fa-bell \uf0f3
-    ok = '', -- nf-fa-check \uf00c
+    Error = '',
+    Warning = '',
+    Info = '',
+    Hint = '',
+    Ok = '',
   },
-  diagnostics = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' },
+  diagnostics = { Error = ' ', Warning = ' ', Hint = ' ', Info = ' ' },
   lsp = { unavailable = '', enabled = ' ', disabled = ' ', attached = '󰖩 ' },
   window = {
     -- window border options: single,double,rounded,solid,shadow,bold,none
-    border = 'rounded',
-
-    -- single border chars
-    -- border_chars = { "╔", "═", "╗", "║", "╝", "═", "╚", "║" }, -- double
-    -- border_chars = { "┌", "─", "┐", "│", "┘", "─", "└", "│" }, -- single
-    border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }, -- rounded
-    -- border_chars = { " ", " ", " ", " ", " ", " ", " ", " " }, -- none
-    -- border_chars = { "┏", "━", "┓", "┃", "┛", "━", "┗", "┃" }, -- bold
-
-    blend = 15,
+    double_border_chars = { '╔', '═', '╗', '║', '╝', '═', '╚', '║' }, -- double
+    single_border_chars = { '┌', '─', '┐', '│', '┘', '─', '└', '│' }, -- single
+    rounded_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }, -- rounded
+    no_border_chars = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, -- none
+    bold_border_chars = { '┏', '━', '┓', '┃', '┛', '━', '┗', '┃' }, -- bold
   },
+
   kinds = {
     Array = ' ',
     Boolean = '󰨙 ',
