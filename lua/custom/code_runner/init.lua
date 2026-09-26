@@ -1,7 +1,8 @@
-local M = {}
+--------------------------------------
+----- SINGLE FILE CODE RUNNER
+--------------------------------------
 
---- ### SINGLE FILE RUNNER
-local utils = require 'custom.utils'
+local M = {}
 
 local commands = {
   python = 'python3 -u "$dir/$fileName"',
@@ -56,14 +57,16 @@ local extensions = {
 }
 
 -- State
-
 M.watch_handle = nil
 M.lock = false --flag to indicate if terminal is busy or not
 M.interrupting = false
 M.prompt_active = false
 M.coderun_dir = nil --directory to run code_runner in
 
----Generate command by substituting variables
+-------------------------------------------------------------------------------
+--- @type function : Generate command by substituting variables
+-------------------------------------------------------------------------------
+
 ---@param command_template string
 ---@return string
 function M.generate_command(command_template)
@@ -104,7 +107,10 @@ function M.generate_command(command_template)
   return cmd
 end
 
----Get language from file extension
+-------------------------------------------------------------------------------
+--- @type function :Get language from file extension
+-------------------------------------------------------------------------------
+
 ---@param extension string
 ---@return string|nil
 local function get_language_from_extension(extension)
@@ -116,14 +122,17 @@ local function get_language_from_extension(extension)
   return nil
 end
 
----Run code for current buffer
+-------------------------------------------------------------------------------
+--- @type function : Run code for current buffer
+-------------------------------------------------------------------------------
+
 function M.run()
   -- Fallback to language detection
   local bufnr = vim.api.nvim_get_current_buf()
   local file_path = vim.api.nvim_buf_get_name(bufnr)
 
   if file_path == '' then
-    utils.log_warn('No file is currently open', '[CodeRunner]')
+    vim.notify('No file is currently open', vim.log.levels.WARN, { title = '[CodeRunner]' })
     return
   end
 
@@ -131,13 +140,13 @@ function M.run()
   local language = get_language_from_extension(extension)
 
   if not language then
-    utils.log_error('Unsupported file extension: ' .. extension, '[CodeRunner]')
+    vim.notify('Unsupported file extension: ' .. extension, vim.log.levels.WARN, { title = '[CodeRunner]' })
     return
   end
 
   local command_template = commands[language]
   if not command_template then
-    utils.log_error('No command configured for: ' .. language, '[CodeRunner]')
+    vim.notify('No command configured for: ' .. language, vim.log.levels.WARN, { title = '[CodeRunner]' })
     return
   end
 
@@ -145,11 +154,14 @@ function M.run()
   M.run_command(cmd)
 end
 
----Execute command in terminal
+-------------------------------------------------------------------------------
+--- @type function :Execute command in terminal
+-------------------------------------------------------------------------------
+
 ---@param cmd string
 function M.run_command(cmd)
   if M.lock then
-    utils.log_warn('CodeRunner is busy, please wait...', '[CodeRunner]')
+    vim.notify('CodeRunner is busy, please wait...', vim.log.levels.WARN, { title = '[CodeRunner]' })
     return
   end
 
@@ -170,9 +182,9 @@ function M.run_command(cmd)
   if not executed then
     local ok, _ = pcall(require, 'toggleterm')
     if ok then
-      require('custom.utils').run_command_in_terminal(cmd)
+      require('custom.code_runner.utils').run_command_in_terminal(cmd)
       executed = true
-      utils.log_info('Executed via toggleterm', '[CodeRunner]')
+      vim.notify('Executed via toggleterm', vim.log.levels.INFO, { title = '[CodeRunner]' })
     end
   end
 
@@ -180,25 +192,28 @@ function M.run_command(cmd)
   if not executed then
     vim.cmd('split | terminal ' .. cmd)
     executed = true
-    utils.log_info('Executed via built-in terminal', '[CodeRunner]')
+    vim.notify('Executed via built-in terminal', vim.log.levels.INFO, { title = '[CodeRunner]' })
   end
 
   -- Release lock after delay
   vim.defer_fn(function() M.lock = false end, 500)
 end
+-------------------------------------------------------------------------------
+--- @type function : Send interrupt signal to toggleterm terminal #13
+-------------------------------------------------------------------------------
 
----Send interrupt signal to toggleterm terminal #13
 function M.send_interrupt()
   if M.interrupting then return end
   M.interrupting = true
 
   for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
     if vim.bo[buf_id].buftype == 'terminal' and vim.b[buf_id].toggle_number == 13 then
-      utils.log_info('Sent interrupt to terminal #13', '[CodeRunner]')
+      vim.notify('Sent interrupt to terminal #13', vim.log.levels.INFO, { title = '[CodeRunner]' })
+
       local chan = vim.b[buf_id].terminal_job_id
       if chan then
         vim.fn.chansend(chan, '\x03')
-        utils.log_info('Sent interrupt to terminal #13', '[CodeRunner]')
+        vim.notify('Sent interrupt to terminal #13', vim.log.levels.INFO, { title = '[CodeRunner]' })
         break
       end
     end
@@ -236,7 +251,7 @@ M.setup = function()
     'n',
     '<leader>rc',
     function() require('custom.code_runner').run() end,
-    vim.tbl_extend('force', opts, { desc = 'Run code' })
+    vim.tbl_extend('force', opts, { desc = 'Run file' })
   )
 
   vim.keymap.set(

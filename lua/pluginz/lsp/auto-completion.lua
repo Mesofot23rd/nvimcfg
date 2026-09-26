@@ -16,6 +16,7 @@ return {
         'rafamadriz/friendly-snippets',
       },
     },
+    { 'saadparwaiz1/cmp_luasnip', lazy = true },
     {
       --AUTOCOMPLETION IN COMMAND MODE
       'hrsh7th/cmp-cmdline',
@@ -43,7 +44,6 @@ return {
         })
       end,
     },
-    { 'saadparwaiz1/cmp_luasnip', lazy = true },
 
     -- Adds other completion capabilities.
     --  nvim-cmp does not ship with all sources by default. They are split

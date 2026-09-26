@@ -7,6 +7,8 @@ local M = {}
 local Align = { provider = '%=' }
 local Space = { provider = ' ' }
 
+-- ============================================================================
+
 local Active_STATUSLINE = {
   condition = conditions.is_active,
   hl = { fg = 'fg', bg = 'bg' },
@@ -33,10 +35,10 @@ local Active_STATUSLINE = {
   component.Mode { os_icon = false, mode_name = false }, -- Mode [just color]
 }
 
+-- ============================================================================
+
 local Short_STATUSLINE = {
-  condition = function()
-    return conditions.is_active() and conditions.width_below(80)
-  end,
+  condition = function() return conditions.is_active() and conditions.width_below(80) end,
   hl = { fg = 'fg', bg = 'bg' },
   component.Mode { os_icon = true, mode_name = false },
   Space,
@@ -48,10 +50,10 @@ local Short_STATUSLINE = {
   component.Mode { os_icon = false, mode_name = false },
 }
 
+-- ============================================================================
+
 local Inactive_STATUSLINE = {
-  condition = function()
-    return not conditions.is_active()
-  end,
+  condition = function() return not conditions.is_active() end,
   hl = { fg = 'fg', bg = 'winbar_bg' },
   Align,
   component.FileIcon,
@@ -59,10 +61,10 @@ local Inactive_STATUSLINE = {
   Align,
 }
 
+-- ============================================================================
+
 local Neotree_STATUSLINE = {
-  condition = function()
-    return conditions.buffer_matches { filetype = { 'neo-tree' } }
-  end,
+  condition = function() return conditions.buffer_matches { filetype = { 'neo-tree' } } end,
   hl = { fg = 'fg', bg = 'bg' },
   component.Mode { os_icon = true, mode_name = false },
   Align,
@@ -70,6 +72,8 @@ local Neotree_STATUSLINE = {
   Align,
   component.ScrollBar,
 }
+
+-- ============================================================================
 
 local Terminal_STATUSLINE = {
   condition = function()
@@ -80,11 +84,13 @@ local Terminal_STATUSLINE = {
   hl = { fg = 'fg', bg = 'bg' },
   component.Mode { os_icon = true, mode_name = true },
   Align,
-    { provider = '  toggleterm # ' },
+  { provider = '  toggleterm # ' },
   -- component.TerminalName,
   Align,
   component.ScrollBar,
 }
+
+-- ============================================================================
 
 M.STATUSLINE = {
   fallthrough = false,
@@ -96,6 +102,8 @@ M.STATUSLINE = {
   Active_STATUSLINE,
 }
 
+-- ============================================================================
+
 M.TABLINE = {
   hl = { fg = 'tabline_fg', bg = 'tabline_bg' },
 
@@ -105,6 +113,8 @@ M.TABLINE = {
   -- 2. Breadcrumbs
   component.Breadcrumbs,
 }
+
+-- ============================================================================
 
 M.STATUSCOLUMN = {
   component.FoldColumn,

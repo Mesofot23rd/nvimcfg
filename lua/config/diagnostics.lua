@@ -1,6 +1,8 @@
 local diagnostic = vim.diagnostic
 
--- global config for diagnostic
+-------------------------------------
+----- GLOBAL CONFIG FOR DIAGNOSTIC
+-------------------------------------
 diagnostic.config {
 
   signs = {
@@ -24,8 +26,9 @@ diagnostic.config {
   update_in_insert = false, -- don't update diagnostics while typing
 }
 
---
--- Toggle diagnostics inline for the current cursor line
+-------------------------------------------------------------------------------
+--- @type function : Toggle diagnostics inline for the current cursor line
+-------------------------------------------------------------------------------
 local function toggle_cursor_line_diagnostic()
   local bufnr = vim.api.nvim_get_current_buf()
   local line = vim.api.nvim_win_get_cursor(0)[1] - 1 -- current line (0-indexed)
@@ -52,5 +55,32 @@ local function toggle_cursor_line_diagnostic()
   end
 end
 
--- Keymap: press <leader>d to toggle diagnostics for cursor line
+-------------------------------------
+----- DIAGNOSTICS KEYMAPS
+-------------------------------------
 vim.keymap.set({ 'n', 'i' }, '<C-d>', toggle_cursor_line_diagnostic, { desc = 'Toggle cursor line diagnostic' })
+
+-- --- quickfix related stuff -----------------------------------------------------
+vim.keymap.set('n', '<leader>xq', function()
+  local qf = vim.fn.getqflist { winid = 0 }
+  if qf.winid ~= 0 then
+    vim.cmd 'cclose'
+  else
+    vim.cmd 'copen | wincmd J'
+  end
+end, { desc = 'Toggle quickfix' })
+
+--- location list related stuff ------------------------------------------------
+vim.keymap.set('n', '<leader>xl', function()
+  local loclist = vim.fn.getloclist(0, { winid = 0, size = 0 })
+  if loclist.winid ~= 0 then
+    vim.cmd 'lclose'
+  elseif loclist.size > 0 then
+    vim.cmd 'lopen'
+  else
+    vim.notify('No location list', vim.log.levels.WARN)
+  end
+end, { desc = 'Toggle location list' })
+
+--map('n', '<m-j>', '<cmd>cnext<cr>', {desc= 'Next Item in Quicklist'})
+--map('n', '<m-k>', '<cmd>cprev<cr>', {desc 'Prev Item in Quicklist'})

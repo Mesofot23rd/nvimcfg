@@ -134,18 +134,6 @@ function M.toggle_spell() vim.wo.spell = not vim.wo.spell end
 --
 
 --------------------------------------------------------------------------------------
-function M.run_command_in_terminal(cmd)
-  -- cmd[command ]
-  -- count
-  -- size
-  -- dir
-  -- direction
-  -- name
-  -- go_back _ whether or not to return to original window
-  -- open _ whether or not to open terminal window
-
-  require('toggleterm').exec(cmd, 13, vim.o.columns * 0.4, nil, 'vertical', nil, true)
-end
 
 --------------------------------------------------------------------------------------
 
@@ -155,7 +143,7 @@ function M.log_error(message, name) vim.notify(name .. ' ' .. message, vim.log.l
 
 ---Log warning message
 ---@param message string
-function M.log_warn(message, name) vim.notify(name .. ' ' .. message, vim.log.levels.WARN, { title = name }) end
+function M.log_warn(message, name) vim.notify(name .. ' ' .. message, vim.log.levels.WARN, ) end
 
 ---Log info message
 ---@param message string

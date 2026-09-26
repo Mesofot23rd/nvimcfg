@@ -2,9 +2,7 @@ local M = {}
 
 function M.toggle()
   local file = vim.api.nvim_buf_get_name(0)
-  if file == '' then
-    return
-  end
+  if file == '' then return end
 
   local extension = vim.fn.fnamemodify(file, ':e'):lower()
   local filename = vim.fn.fnamemodify(file, ':t:r')
@@ -22,13 +20,15 @@ function M.toggle()
 
   local targets = pairs[extension]
   if not targets then
-    require('custom.utils').log_warn('Not a C/C++ header or implementation file', '[HeaderSwitch]')
+    vim.notify('Not a C/C++ header or implementation file', vim.log.levels.WARN, { title = '[HeaderSwitch]' })
     return
   end
 
   -- Find project root using common markers, fallback to current working directory
-  local root = vim.fs.root(file, { '.git', 'Makefile', 'makefile', 'CMakeLists.txt', 'meson.build', 'build.ninja', 'src/', 'build/', 'include/' })
-    or vim.fn.getcwd()
+  local root = vim.fs.root(
+    file,
+    { '.git', 'Makefile', 'makefile', 'CMakeLists.txt', 'meson.build', 'build.ninja', 'src/', 'build/', 'include/' }
+  ) or vim.fn.getcwd()
 
   for _, ext in ipairs(targets) do
     local target_name = filename .. '.' .. ext
@@ -40,7 +40,11 @@ function M.toggle()
       return
     end
   end
-  require('custom.utils').log_error('Corresponding header or implementation file is missing in the project', '[HeaderSwitch]')
+  vim.notify(
+    'Corresponding header or implementation file is missing in the project',
+    vim.log.levels.ERROR,
+    { title = '[HeaderSwitch]' }
+  )
 end
 
 return M

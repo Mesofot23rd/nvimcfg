@@ -12,12 +12,8 @@ local Space = { provider = ' ' }
 --------------------------------------------------------------------------------
 
 M.OSIcon = {
-  provider = function()
-    return ' ' .. utils.get_os_icon() .. '  '
-  end,
-  hl = function()
-    return { bg = hl.mode_bg(), fg = 'bg', bold = true }
-  end,
+  provider = function() return ' ' .. utils.get_os_icon() .. '  ' end,
+  hl = function() return { bg = hl.mode_bg(), fg = 'bg', bold = true } end,
 }
 
 M.ModeName = {
@@ -25,28 +21,20 @@ M.ModeName = {
     local mode = vim.fn.mode()
     return env.modes[mode] and env.modes[mode][1] or 'UNKNOWN '
   end,
-  hl = function()
-    return { bg = hl.mode_bg(), fg = 'bg', bold = true }
-  end,
+  hl = function() return { bg = hl.mode_bg(), fg = 'bg', bold = true } end,
 }
 
 -- Flexible Mode component
 M.Mode = function(opts)
   opts = opts or {}
   local children = {}
-  if opts.os_icon ~= false then
-    table.insert(children, M.OSIcon)
-  end
-  if opts.mode_name ~= false then
-    table.insert(children, M.ModeName)
-  end
+  if opts.os_icon ~= false then table.insert(children, M.OSIcon) end
+  if opts.mode_name ~= false then table.insert(children, M.ModeName) end
   if #children == 0 then
     -- Just color mode
     return {
       provider = ' ',
-      hl = function()
-        return { bg = hl.mode_bg() }
-      end,
+      hl = function() return { bg = hl.mode_bg() } end,
     }
   end
   return children
@@ -58,12 +46,8 @@ end
 
 M.GitBranch = {
   condition = conditions.is_git_repo,
-  init = function(self)
-    self.status_dict = vim.b.gitsigns_status_dict
-  end,
-  provider = function(self)
-    return '  ' .. self.status_dict.head .. ' '
-  end,
+  init = function(self) self.status_dict = vim.b.gitsigns_status_dict end,
+  provider = function(self) return '  ' .. self.status_dict.head .. ' ' end,
   hl = { fg = 'git_branch_fg', bold = true },
 }
 
@@ -73,9 +57,7 @@ M.GitDiff = {
     pattern = { 'GitSignsUpdate', 'GitSignsChanged', 'MiniDiffUpdated' },
   },
   condition = conditions.is_git_repo,
-  init = function(self)
-    self.status_dict = vim.b.gitsigns_status_dict
-  end,
+  init = function(self) self.status_dict = vim.b.gitsigns_status_dict end,
   {
     provider = function(self)
       local count = self.status_dict.added or 0
@@ -119,27 +101,19 @@ M.Diagnostics = {
   end,
   update = { 'DiagnosticChanged', 'BufEnter' },
   {
-    provider = function(self)
-      return self.errors > 0 and (self.error_icon .. ' ' .. self.errors .. ' ')
-    end,
+    provider = function(self) return self.errors > 0 and (self.error_icon .. ' ' .. self.errors .. ' ') end,
     hl = { fg = 'diag_ERROR' },
   },
   {
-    provider = function(self)
-      return self.warnings > 0 and (self.warn_icon .. ' ' .. self.warnings .. ' ')
-    end,
+    provider = function(self) return self.warnings > 0 and (self.warn_icon .. ' ' .. self.warnings .. ' ') end,
     hl = { fg = 'diag_WARN' },
   },
   {
-    provider = function(self)
-      return self.info > 0 and (self.info_icon .. ' ' .. self.info .. ' ')
-    end,
+    provider = function(self) return self.info > 0 and (self.info_icon .. ' ' .. self.info .. ' ') end,
     hl = { fg = 'diag_INFO' },
   },
   {
-    provider = function(self)
-      return self.hints > 0 and (self.hint_icon .. ' ' .. self.hints .. ' ')
-    end,
+    provider = function(self) return self.hints > 0 and (self.hint_icon .. ' ' .. self.hints .. ' ') end,
     hl = { fg = 'diag_HINT' },
   },
 }
@@ -150,9 +124,7 @@ M.Diagnostics = {
 
 M.MacroRecording = {
   condition = conditions.is_macro_recording,
-  provider = function()
-    return '  ' .. vim.fn.reg_recording() .. ' '
-  end,
+  provider = function() return '  ' .. vim.fn.reg_recording() .. ' ' end,
   hl = { fg = 'macro_recording', bold = true },
   update = {
     'RecordingEnter',
@@ -189,13 +161,9 @@ M.FileIcon = {
     end
   end,
 
-  provider = function(self)
-    return self.icon and (self.icon .. '  ')
-  end,
+  provider = function(self) return self.icon and (self.icon .. '  ') end,
 
-  hl = function(self)
-    return { fg = self.icon_color }
-  end,
+  hl = function(self) return { fg = self.icon_color } end,
 }
 
 M.FileTypeName = {
@@ -209,12 +177,8 @@ M.FileTypeName = {
 M.FileType = function(opts)
   opts = opts or {}
   local children = {}
-  if opts.icon ~= false then
-    table.insert(children, M.FileIcon)
-  end
-  if opts.name ~= false then
-    table.insert(children, M.FileTypeName)
-  end
+  if opts.icon ~= false then table.insert(children, M.FileIcon) end
+  if opts.name ~= false then table.insert(children, M.FileTypeName) end
   return children
 end
 
@@ -254,9 +218,7 @@ M.Venv = {
   condition = conditions.has_virtual_env,
   provider = function()
     local venv = vim.env.VIRTUAL_ENV or vim.env.CONDA_DEFAULT_ENV
-    if venv then
-      return ' [' .. vim.fn.fnamemodify(venv, ':t') .. '] '
-    end
+    if venv then return ' [' .. vim.fn.fnamemodify(venv, ':t') .. '] ' end
   end,
   hl = { fg = 'lsp_active', bold = true },
 }
@@ -333,9 +295,7 @@ M.StatusColumn = {
 M.FileName = {
   provider = function()
     local filename = vim.fn.expand '%:t'
-    if filename == '' then
-      filename = '[No Name]'
-    end
+    if filename == '' then filename = '[No Name]' end
     return ' ' .. filename .. ' '
   end,
   hl = { fg = 'fg', bold = true },
@@ -352,15 +312,11 @@ M.Breadcrumbs = {
 
   update = { 'CursorMoved', 'CursorMovedI', 'BufEnter', 'WinEnter', 'ModeChanged', 'TextChanged', 'TextChangedI' },
 
-  init = function(self)
-    self.icons = require('custom.icons').kinds
-  end,
+  init = function(self) self.icons = require('custom.icons').kinds end,
 
   provider = function(self)
     local ok, aerial = pcall(require, 'aerial')
-    if not ok then
-      return ''
-    end
+    if not ok then return '' end
 
     local symbols = aerial.get_location(true)
     if symbols and #symbols > 0 then

@@ -75,9 +75,8 @@ return {
     }
 
     -- ----------------------------------------------------------------------------------------------------------------
-    --NEOTREE
-
-    -- vim.cmd [[nnoremap \ :Neotree reveal<cr>]]
+    --MAPPINGS
     vim.keymap.set({ 'n', 'i' }, '<C-b>', '<cmd>Neotree toggle position=left<CR>', { noremap = true, silent = true }) -- focus file explorer
+    vim.keymap.set('n', '-', '<cmd>Neotree toggle position=left<CR>', { noremap = true, silent = true })
   end,
 }

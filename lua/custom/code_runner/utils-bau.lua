@@ -45,6 +45,10 @@ local function get_makefile_opts(path)
   return options
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 ---Given a CMakeLists.txt file, parse all the targets,
 ---and return them as a table.
 ---@param path string Path to the CMakeLists.txt file.
@@ -71,6 +75,10 @@ local function get_cmake_opts(path)
 
   return options
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 --- Given a Mesonfile, parse all the options,
 --- and return them as a table.
@@ -99,6 +107,10 @@ local function get_meson_opts(path)
   return options
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 ---If a gradle.build.kts or gradle.build  file exists,
 ---parse the result of the command `gradle tasks`.
 ---
@@ -111,9 +123,7 @@ local function get_gradle_cmd_opts(path)
   -- guard clause
   local gradle_kts_file_exists = vim.fn.filereadable(path) == 1
   local gradle_file_exists = vim.fn.filereadable(vim.fn.fnamemodify(path, ':t:r')) == 1
-  if not gradle_kts_file_exists and not gradle_file_exists then
-    return {}
-  end
+  if not gradle_kts_file_exists and not gradle_file_exists then return {} end
 
   -- parse
   local GRADLE_CMD = 'gradle tasks'
@@ -134,15 +144,17 @@ local function get_gradle_cmd_opts(path)
   -- Check if the output is a single line and contains only characters.
   if cmd_output:find '[^\n\r]+' and not cmd_output:find '[^%a\n\r]' then
     for task in cmd_output:gmatch '%S+' do
-      if task == '' then
-        break
-      end
+      if task == '' then break end
       table.insert(options, { text = 'Gradle ' .. task, value = task, bau = 'gradle' })
     end
   end
 
   return options
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Given a build.gradle.kts file, parse all the tasks,
 ---and return them as a table.
@@ -202,6 +214,10 @@ local function get_gradle_opts(path)
   return options
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 --- Given a package.json file, parse all the targets,
 --- and return them as a table.
 ---
@@ -220,9 +236,7 @@ local function get_nodejs_opts(path)
 
     -- parse package.json
     local package_json = {}
-    local success, result = pcall(function()
-      package_json = vim.fn.json_decode(content)
-    end)
+    local success, result = pcall(function() package_json = vim.fn.json_decode(content) end)
     if not success then
       -- Handle the error, such as invalid JSON format
       print('Error decoding JSON: ' .. result)
@@ -231,9 +245,7 @@ local function get_nodejs_opts(path)
 
     -- Global: NODEJS_PACKAGE_MANAGER
     local success, package_manager = pcall(vim.api.nvim_get_var, 'NODEJS_PACKAGE_MANAGER')
-    if not success or package_manager == '' then
-      package_manager = 'npm'
-    end
+    if not success or package_manager == '' then package_manager = 'npm' end
 
     -- Add parsed options to table "options"
     local scripts = package_json.scripts
@@ -266,6 +278,10 @@ local function get_nodejs_opts(path)
   return options
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 -- FRONTEND
 -- Public functions to call from the frontend.
 -- ============================================================================
@@ -296,6 +312,10 @@ function M.get_bau_opts()
 
   return options
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Programatically require a bau backend,
 --- responsible for running the action selected by the user in the frontend.

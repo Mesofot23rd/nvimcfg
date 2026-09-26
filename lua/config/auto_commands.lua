@@ -51,10 +51,10 @@ autocmd('ColorScheme', {
 
 ---------------------------------------------------------------------------------
 ---- HELP WINDOW LEFT
-autocmd('FileType', {
-  pattern = 'help',
-  callback = function() vim.cmd 'wincmd L' end,
-})
+-- autocmd('FileType', {
+--   pattern = 'help',
+--   callback = function() vim.cmd 'wincmd L' end,
+-- })
 
 ---------------------------------------------------------------------------------
 ---- CLOSE THE FOLLOWING PATTERN WITH `Q`
@@ -102,12 +102,3 @@ autocmd('FileType', {
   pattern = '*',
   callback = function() vim.opt_local.formatoptions:remove { 'r', 'o' } end,
 })
-
--- Effect: URL underline.
--- vim.api.nvim_set_hl(0, 'HighlightURL', { underline = true })
--- autocmd({ 'VimEnter', 'FileType', 'BufEnter', 'WinEnter' }, {
---   desc = 'URL Highlighting',
---   callback = function()
---     require('custom.utils').set_url_hl()
---   end,
--- })

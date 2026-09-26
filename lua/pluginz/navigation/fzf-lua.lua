@@ -1,8 +1,6 @@
 local function get_root()
   local bufpath = vim.api.nvim_buf_get_name(0)
-  if bufpath == '' then
-    return vim.fn.getcwd()
-  end
+  if bufpath == '' then return vim.fn.getcwd() end
   return vim.fs.root(bufpath, '.git') or vim.fn.getcwd()
 end
 
@@ -44,13 +42,10 @@ return {
     -- Files / Grep
     { '<leader>ff', '<Cmd>FzfLua files<CR>', desc = 'Find files[fzf]' },
     { '<leader>fg', '<Cmd>FzfLua git_files<CR>', desc = 'Find Git files[fzf]' },
-    { '<leader>fr', '<Cmd>FzfLua live_grep<CR>', desc = 'Live grep[fzf]' },
+    { '<leader>fr', '<Cmd>FzfLua live_grep<CR>', desc = 'Find Live grep[fzf]' },
     { '<leader>fb', '<Cmd>FzfLua buffers<CR>', desc = 'Find Buffers[fzf]' },
     { '<leader>fh', '<Cmd>FzfLua help_tags<CR>', desc = 'Find Help tags[fzf]' },
-    -- { '<leader>fo', '<Cmd>FzfLua oldfiles<CR>', desc = 'Recent files' },
     { '<leader>f/', '<Cmd>FzfLua blines<CR>', desc = 'Search current buffer[fzf]' },
-    -- { '<leader>fc', '<Cmd>FzfLua colorschemes<CR>', desc = 'Colorschemes' },
-    -- { '<leader>fq', '<Cmd>FzfLua quickfix<CR>', desc = 'Quickfix' },
     { '<leader>ft', '<Cmd>TodoFzfLua<CR>', desc = 'Find TODOs[fzf]' },
 
     -- Diagnostics
@@ -60,25 +55,19 @@ return {
     -- Word Search
     {
       '<leader>fw',
-      function()
-        require('fzf-lua').grep_cword()
-      end,
+      function() require('fzf-lua').grep_cword() end,
       desc = 'Search word under cursor[fzf]',
     },
     {
       '<leader>fW',
-      function()
-        require('fzf-lua').grep_cWORD()
-      end,
+      function() require('fzf-lua').grep_cWORD() end,
       desc = 'Search WORD under cursor[fzf]',
     },
 
     -- Git
     {
       '<leader>gs',
-      function()
-        require('fzf-lua').git_status { cwd = get_root() }
-      end,
+      function() require('fzf-lua').git_status { cwd = get_root() } end,
       desc = 'Git status[fzf]',
     },
     { '<leader>gc', '<Cmd>FzfLua git_commits<CR>', desc = 'Git commits[fzf]' },

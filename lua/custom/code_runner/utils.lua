@@ -2,21 +2,42 @@
 
 local M = {}
 
----Run a command in a Terminal vertical split.
+-------------------------------------------------------------------------------
+--- @type function : Run a command in a Terminal vertical split.
+-------------------------------------------------------------------------------
+
 ---Reuses the same terminal if already open.
 ---On success, auto-closes after 20 seconds.
 ---On failure, maps `q` to manually close.
+
 ---@param cmd string The command to run.
 function M.run_in_terminal(cmd)
-  require('custom.utils').run_command_in_terminal(cmd)
+  -- cmd[command ]
+  -- count
+  -- size
+  -- dir
+  -- direction
+  -- name
+  -- go_back _ whether or not to return to original window
+  -- open _ whether or not to open terminal window
+
+  require('toggleterm').exec(cmd, 13, vim.o.columns * 0.4, nil, 'vertical', nil, true)
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 function M.compiler_redo()
   local current_filetype = vim.bo.filetype
 
   -- If the user didn't select an option yet, send a notification.
   if _G.compiler_redo_selection == nil and _G.compiler_redo_bau_selection == nil then
-    vim.notify('Open the compiler and select an option before doing redo.', vim.log.levels.INFO, { title = 'Compiler.nvim' })
+    vim.notify(
+      'Open the compiler and select an option before doing redo.',
+      vim.log.levels.INFO,
+      { title = 'Compiler.nvim' }
+    )
     return
   end
   if _G.compiler_redo_filetype then
@@ -34,21 +55,19 @@ function M.compiler_redo()
   local bau = _G.compiler_redo_bau
   if bau then
     local bau_selection = _G.compiler_redo_bau_selection
-    if bau_selection then
-      bau.action(bau_selection)
-    end
+    if bau_selection then bau.action(bau_selection) end
   else
     local language = require('custom.code_runner.utils').require_language(current_filetype)
-    if not language then
-      language = require('custom.code_runner.utils').require_language 'make'
-    end
+    if not language then language = require('custom.code_runner.utils').require_language 'make' end
     language.action(_G.compiler_redo_selection)
   end
 end
 
----Recursively searches for files with the given name
+-------------------------------------------------------------------------------
+--- @type function : ---Recursively searches for files with the given name
 --- in all directories under start_dir.
----
+-------------------------------------------------------------------------------
+
 --- Use this function instead of `find_files_to_compile()` if you need
 --- to operate the paths after calling the function.
 ---@param start_dir string A dir path string.
@@ -67,7 +86,11 @@ function M.find_files(start_dir, file_name, surround)
       file_name
     )
   else -- UNIX-like systems
-    find_command = string.format('find "%s" -type d -name ".git" -prune -o -type f -name "%s" -print 2>/dev/null', start_dir, file_name)
+    find_command = string.format(
+      'find "%s" -type d -name ".git" -prune -o -type f -name "%s" -print 2>/dev/null',
+      start_dir,
+      file_name
+    )
   end
 
   -- Execute the find command and capture the output
@@ -87,6 +110,10 @@ function M.find_files(start_dir, file_name, surround)
   return files
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 ---Search recursively, starting by the directory
 ---of the entry_point file. Return files matching the pattern.
 ---
@@ -102,6 +129,10 @@ function M.find_files_to_compile(entry_point, pattern)
 
   return files_as_string
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Parse the solution file and extract variables.
 ---@param file_path string Path of the solution file to read.
@@ -148,13 +179,15 @@ function M.parse_solution_file(file_path)
   config['executables'] = executables
 
   for key, value in pairs(config) do
-    if type(value) == 'table' and next(value) == nil then
-      config[key] = nil
-    end
+    if type(value) == 'table' and next(value) == nil then config[key] = nil end
   end
 
   return config
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Programatically require the backend for the current language.
 ---@return table|nil language The language backend.
@@ -171,6 +204,10 @@ function M.require_language(filetype)
     return nil
   end
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Function that returns true if a file exists in physical storage
 ---@return boolean|nil exists true or false
@@ -193,29 +230,31 @@ function M.get_solution_file()
   end
 end
 
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
+
 ---Given a string, convert 'slash' to 'inverted slash' if on windows, and vice versa on UNIX.
 ---Then return the resulting string surrounded by "".
----
+
 ---This way the shell will be able to detect spaces in the path.
 ---@param path string A path string.
 ---@param surround boolean|nil If true, surround path by "". False by default.
 ---@return string|nil,nil path A path string formatted for the current OS.
 function M.os_path(path, surround)
-  if path == nil then
-    return nil
-  end
-  if surround == nil then
-    surround = false
-  end
+  if path == nil then return nil end
+  if surround == nil then surround = false end
 
   local separator = string.sub(package.config, 1, 1)
 
-  if surround then
-    path = '"' .. path .. '"'
-  end
+  if surround then path = '"' .. path .. '"' end
 
   return string.gsub(path, '[/\\]', separator)
 end
+
+-------------------------------------------------------------------------------
+--- @type function :
+-------------------------------------------------------------------------------
 
 ---Returns the tests dir + a path_to_append at the end.
 ---@param path_to_append string A subdirectory to append to he returned dir.

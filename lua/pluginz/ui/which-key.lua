@@ -10,20 +10,19 @@ return {
   opts = {
     -- Document existing key chains
     spec = {
-      -- { '<leader>a', group = '[A]I' },
+      { '<leader>a', group = '[A]I' },
       { '<leader>b', group = '[B]uffer' },
       -- { '<leader>c', group = '[C]make' },
       -- { '<leader>d', group = '[D]iagnostics' },
-      -- { '<leader>E', group = '[N]eo_Tree' },
+
       { '<leader>f', group = '[F]ind' },
       { '<leader>g', group = '[G]it' },
       { '<leader>l', group = '[L]sp/Language_Tools' },
-      -- { '<leader>p', group = '[P]roject' },
-
+      { '<leader>m', group = '[M]anager' },
       { '<leader>r', group = '[R]unCode' },
 
-      -- { '<leader>S', group = '[S]ession' },
-      { '<leader>--[[ t ]]', group = '[T]erminal' },
+      { '<leader>S', group = '[S]ession' },
+      { '<leader>t', group = '[T]erminal' },
       { '<leader>u', group = '[U]I/UX' },
       { '<leader>w', group = '[W]indow' },
 

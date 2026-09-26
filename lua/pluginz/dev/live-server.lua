@@ -13,21 +13,21 @@ return {
       'n',
       '<leader>rs',
       function() require('live_server.core').toggle_live_server() end,
-      { desc = 'Toggle [L]iveServer' }
+      { desc = '[L]iveServer' }
     )
 
     vim.keymap.set(
       'n',
       '<leader>rb',
       function() require('live_server.core').toggle_browser_sync() end,
-      { desc = 'Toggle [B]rowserSync' }
+      { desc = '[B]rowserSync' }
     )
 
     vim.keymap.set(
       'n',
       '<leader>rl',
       function() require('live_server.ui').list_servers() end,
-      { desc = 'List [L]iveServers' }
+      { desc = '[L]iveServers list' }
     )
   end,
 }

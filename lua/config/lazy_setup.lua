@@ -1,6 +1,7 @@
 --Setup Lazy
 local is_vscode = vim.g.vscode ~= nil
 local is_android = vim.fn.has 'Android'
+-- local is_windows = vim.fn.has 'Win32'
 
 local specs
 
@@ -57,4 +58,17 @@ require('lazy').setup {
       height = 0.8,
     },
   },
+  performance = {
+    rtp = { -- Disable unnecessary nvim features to speed up startup.
+      disabled_plugins = {
+        'tohtml',
+        'gzip',
+        'zipPlugin',
+        'netrwPlugin',
+        'tarPlugin',
+      },
+    },
+  },
+  -- Enable luarocks if installed.
+  rocks = { enabled = vim.fn.executable 'luarocks' == 1 },
 }

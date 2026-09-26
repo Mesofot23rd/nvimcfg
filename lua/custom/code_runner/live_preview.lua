@@ -16,8 +16,8 @@ M.live_preview = function()
     local found = vim.fs.find(target_file, { path = root, upward = false, limit = 3 })
     if #found > 0 then
       local cmd = 'live-server --browser=firefox --port=8080 ' .. found[1]
-      require('custom.utils').run_command_in_terminal(cmd)
-      require('custom.utils').log_warn(found[1], '[CodeRunner]')
+      require('custom.code_runner.utils').run_command_in_terminal(cmd)
+      vim.notify(found[1], vim.log.levels.INFO, { title = '[CodeRunner]' })
       return
     end
   end

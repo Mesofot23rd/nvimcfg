@@ -127,7 +127,7 @@ vim.opt.runtimepath:remove '/usr/share/vim/vimfiles'
 vim.opt.sessionoptions = {
   'curdir',
   -- 'folds',
-  'tabpages',
+  -- 'tabpages',
   'winsize',
   -- 'terminal',
   'options',

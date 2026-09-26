@@ -1,7 +1,5 @@
 return {
   'numToStr/Comment.nvim',
-
-  cond = not vim.g.vscode,
   event = 'VeryLazy',
   dependencies = {
     'JoosepAlviste/nvim-ts-context-commentstring',
@@ -30,9 +28,7 @@ return {
     -- Set comment string for /etc/environment
     vim.api.nvim_create_autocmd('FileType', {
       pattern = { 'conf' },
-      callback = function()
-        vim.opt_local.commentstring = '#%s'
-      end,
+      callback = function() vim.opt_local.commentstring = '#%s' end,
     })
   end,
 }

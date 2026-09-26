@@ -3,9 +3,13 @@ return {
   cmd = 'Trouble',
   keys = {
     { '<leader>xD', '<Cmd>Trouble diagnostics toggle win.position=right<CR>', desc = 'Diagnostics' },
-    { '<leader>xd', '<Cmd>Trouble diagnostics toggle filter.buf=0 win.position=right<CR>', desc = 'Buffer diagnostics' },
     {
-      '<leader>cl',
+      '<leader>xd',
+      '<Cmd>Trouble diagnostics toggle filter.buf=0 win.position=right<CR>',
+      desc = 'Buffer diagnostics',
+    },
+    {
+      '<leader>xl',
       '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
       desc = 'LSP Definitions / references / ... (Trouble)',
     },
