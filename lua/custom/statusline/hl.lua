@@ -1,11 +1,9 @@
 local M = {}
-local env = require 'custom.statusline_components.env'
+local env = require 'custom.statusline.env'
 
 --- Get the highlight background color of the lualine theme for the current colorscheme.
 function M.lualine_mode(mode, fallback)
-  if not vim.g.colors_name then
-    return fallback
-  end
+  if not vim.g.colors_name then return fallback end
   local lualine_avail, lualine = pcall(require, 'lualine.themes.' .. vim.g.colors_name)
   local lualine_opts = lualine_avail and lualine[mode]
   return lualine_opts and type(lualine_opts.a) == 'table' and lualine_opts.a.bg or fallback
@@ -64,8 +62,10 @@ function M.get_colors()
   local HeirlineInsert = M.get_hlgroup('HeirlineInsert', { bg = nil }).bg or M.lualine_mode('insert', C.green)
   local HeirlineVisual = M.get_hlgroup('HeirlineVisual', { bg = nil }).bg or M.lualine_mode('visual', C.purple)
   local HeirlineReplace = M.get_hlgroup('HeirlineReplace', { bg = nil }).bg or M.lualine_mode('replace', C.bright_red)
-  local HeirlineCommand = M.get_hlgroup('HeirlineCommand', { bg = nil }).bg or M.lualine_mode('command', C.bright_yellow)
-  local HeirlineTerminal = M.get_hlgroup('HeirlineTerminal', { bg = nil }).bg or M.lualine_mode('insert', HeirlineInsert)
+  local HeirlineCommand = M.get_hlgroup('HeirlineCommand', { bg = nil }).bg
+    or M.lualine_mode('command', C.bright_yellow)
+  local HeirlineTerminal = M.get_hlgroup('HeirlineTerminal', { bg = nil }).bg
+    or M.lualine_mode('insert', HeirlineInsert)
 
   local colors = {
     close_fg = Error.fg,

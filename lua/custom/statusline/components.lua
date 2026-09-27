@@ -1,7 +1,7 @@
-local conditions = require 'custom.statusline_components.condition'
-local utils = require 'custom.statusline_components.utils'
-local hl = require 'custom.statusline_components.hl'
-local env = require 'custom.statusline_components.env'
+local conditions = require 'custom.statusline.condition'
+local utils = require 'custom.statusline.utils'
+local hl = require 'custom.statusline.hl'
+local env = require 'custom.statusline.env'
 
 local M = {}
 
@@ -312,7 +312,7 @@ M.Breadcrumbs = {
 
   update = { 'CursorMoved', 'CursorMovedI', 'BufEnter', 'WinEnter', 'ModeChanged', 'TextChanged', 'TextChangedI' },
 
-  init = function(self) self.icons = require('custom.icons').kinds end,
+  init = function(self) self.icons = require('base.icons.icons').Kinds end,
 
   provider = function(self)
     local ok, aerial = pcall(require, 'aerial')

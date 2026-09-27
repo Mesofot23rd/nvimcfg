@@ -9,6 +9,7 @@ local autocmd = vim.api.nvim_create_autocmd
 
 ---------------------------------------------------------------------------------
 ---- MAKE SPECIAL BUFFERS "UNLISTED" AND PREVENT THEM FROM BEING REPLACED:
+---------------------------------------------------------------------------------
 autocmd('BufEnter', {
   pattern = { 'term://*', 'qf', 'help', 'oil://*', 'copilot-*' },
   callback = function()
@@ -19,6 +20,7 @@ autocmd('BufEnter', {
 
 ---------------------------------------------------------------------------------
 ---- RESTORE_CURSOR
+---------------------------------------------------------------------------------
 autocmd('BufReadPost', {
   callback = function(args)
     local buf = args.buf
@@ -31,26 +33,29 @@ autocmd('BufReadPost', {
 
 ---------------------------------------------------------------------------------
 ----SESSION AND COLORSCHEME RESTORE
-autocmd('UIEnter', {
-  callback = function()
-    if vim.fn.argc() == 0 then require('persistence').load() end
-    require('custom.colorscheme_persist').load()
-    require('custom.bg_change').load_bg()
-  end,
-})
+---------------------------------------------------------------------------------
+ autocmd('UIEnter', {
+   callback = function()
+     -- if vim.fn.argc() == 0 then require('persistence').load() end
+     require('custom.colorscheme_persist').load()
+     require('custom.bg_change').load_bg()
+   end,
+ })
 
 ---------------------------------------------------------------------------------
-----SAVE COLORSCHEME TO FiLE ON CHANGE
+----SAVE COLORSCHEME TO FiLE ON WHEN COLORSCHEME IS CHANGED\
 ----RE-APPLY BACKGROUND COLOR ON COLORSCHEME CHANGE
+---------------------------------------------------------------------------------
 autocmd('ColorScheme', {
   callback = function()
-    require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
+    -- require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
     require('custom.bg_change').load_bg()
   end,
 })
 
 ---------------------------------------------------------------------------------
 ---- HELP WINDOW LEFT
+---------------------------------------------------------------------------------
 -- autocmd('FileType', {
 --   pattern = 'help',
 --   callback = function() vim.cmd 'wincmd L' end,
@@ -58,6 +63,7 @@ autocmd('ColorScheme', {
 
 ---------------------------------------------------------------------------------
 ---- CLOSE THE FOLLOWING PATTERN WITH `Q`
+---------------------------------------------------------------------------------
 autocmd('FileType', {
   pattern = { 'checkhealth', 'qf', 'help', 'man', 'lspinfo' },
   callback = function() vim.keymap.set('n', 'q', ':close<CR>', { noremap = true, silent = true }) end,
@@ -65,6 +71,7 @@ autocmd('FileType', {
 
 ---------------------------------------------------------------------------------
 ---- EXCLUDE SPECIAL BUFFERS FROM SESSION
+---------------------------------------------------------------------------------
 autocmd('User', {
   pattern = 'PersistenceSavePre',
   callback = function()
@@ -84,6 +91,7 @@ autocmd('User', {
 
 ---------------------------------------------------------------------------------
 ---- C/C++ HEADER TOGGLE
+---------------------------------------------------------------------------------
 autocmd('FileType', {
   pattern = { 'c', 'cpp' },
   callback = function()
@@ -91,14 +99,32 @@ autocmd('FileType', {
       'n',
       'T',
       function() require('custom.header_switch').toggle() end,
-      { buffer = true, desc = 'Toggle between header and implementation' }
+      { buffer = true, desc = 'Toggle between header and implementation files' }
     )
   end,
 })
 
 ---------------------------------------------------------------------------------
 ---- DISABLE AUTO-COMMENT ON NEW LINE
+---------------------------------------------------------------------------------
 autocmd('FileType', {
   pattern = '*',
   callback = function() vim.opt_local.formatoptions:remove { 'r', 'o' } end,
 })
+
+---------------------------------------------------------------------------------
+---- CUSTOM USER COMMANDS
+---------------------------------------------------------------------------------
+-- CHANGE BACKGROUND COLOR
+vim.api.nvim_create_user_command(
+  'Bg',
+  function() require('custom.bg_change').select_bg() end,
+  { desc = 'Select Background Color' }
+)
+
+-- COLORSCHEME SELECT
+vim.api.nvim_create_user_command(
+  'Cp',
+  function() require('custom.colorscheme_persist').colorscheme_picker() end,
+  { desc = 'Select ColorScheme' }
+)

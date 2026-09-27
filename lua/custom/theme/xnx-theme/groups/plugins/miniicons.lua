@@ -1,6 +1,6 @@
 ---@type AstroThemeCallback
 local function callback(c)
-  local color = require "astrotheme.lib.color"
+  local color = require "custom.theme.xnx-theme.lib.color"
   return {
     MiniIconsAzure = { fg = color.new(c.ui.blue):lighten(35):tohex() },
     MiniIconsBlue = { fg = c.ui.blue },

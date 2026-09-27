@@ -1,4 +1,4 @@
-local env = require 'custom.statusline_components.env'
+local env = require 'custom.statusline.env'
 local M = {}
 
 --- Get an icon from given its icon name.
@@ -18,29 +18,27 @@ end
 --- Get the OS icon based on the current system.
 ---@return string icon.
 function M.get_os_icon()
-  -- print(sysname)
-
-  local sysname = vim.uv.os_uname().sysname
   -- local sysname = vim.uv.os_gethostname()
+  local sysname = vim.uv.os_uname().sysname
+  local os_icon = ''
 
   if sysname:match 'Darwin' then
-    return ''
+    os_icon = ''
   elseif sysname:match 'Windows' then
-    return ''
+    os_icon ''
   elseif sysname:match 'Windows_NT' then
-    return ''
+    os_icon ''
   elseif sysname:match 'OpenBSD' then
-    return 'BSD'
+    os_icon 'BSD'
   elseif sysname:match 'Linux' then
+    os_icon = ''
+
     local release = vim.loop.os_uname().release
-
-    if release:lower():match 'arch' then return '' end
-    if vim.fn.has 'Android' == 1 then return '󱚟' end
-
-    return ''
-  else
-    return ''
+    if release:lower():match 'arch' then os_icon = '' end
+    if vim.fn.has 'Android' == 1 then os_icon = '󱚟' end
   end
+
+  return os_icon
 end
 
 return M

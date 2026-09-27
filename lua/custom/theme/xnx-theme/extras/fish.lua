@@ -1,4 +1,4 @@
-local util = require "astrotheme.extras"
+local util = require "custom.theme.xnx-theme.extras"
 
 local M = {}
 

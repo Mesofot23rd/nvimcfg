@@ -4,8 +4,8 @@
 --   if opts then options = vim.tbl_extend('force', options, opts) end
 --   vim.keymap.set(mode, lhs, rhs, options)
 -- end
-
-local ToggleOption = require 'config.toggleopt'
+local toggle_option = require 'custom.toggle_option'
+local config_update = require 'custom.config_update'
 
 ----------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------
@@ -36,6 +36,8 @@ map('n', '<M-r>', '<cmd>restart<CR>') --Restart neovim
 --- plugins and tools managers -------------------------------------------------
 map('n', '<leader>ml', '<cmd>Lazy<cr>', desc 'Lazy Manager')
 map('n', '<leader>mm', '<cmd>Mason<cr>', desc 'Mason Manager')
+map('n', '<leader>mt', '<cmd>TSUpdate<cr>', desc 'Treesitter Update ')
+map('n', '<leader>md', '<cmd>DistroUpdate<cr>', desc 'Distro Update ')
 
 --- show documentation in a popup window ---------------------------------------
 -- map('n', '<leader>k', '<cmd>normal! K<cr>', desc 'Show Documentation')
@@ -111,6 +113,7 @@ map({ 'i', 'n' }, '<C-y>', '<cmd>redo<CR>') --redo
 map('n', '<leader>br', '<Cmd>edit!<CR>', desc 'Reload Buffer')
 map('n', '<leader>bn', '<Cmd>new<CR>', desc 'Create new Buffer')
 map('n', '<leader>bc', ':%bd|e#|bd#<CR>', { desc = 'Close Saved Buffers Only' })
+map('n', '<leader>bW', function() vim.cmd 'wa' end, desc 'Write all changed buffers')
 map('n', '<leader>bd', '<Cmd>bprevious <bar> bdelete #<CR>') -- close buffer without closing the window
 map('n', '<leader>bD', function()
   local buf_ids = vim.api.nvim_list_bufs()
@@ -177,6 +180,12 @@ map('t', '<c-k>', '<C-\\><C-N><C-w>k', desc 'Switch to Top Window')
 map('t', '<c-l>', '<C-\\><C-N><C-w>l', desc 'Switch to Right Window')
 
 -------------------------------------
+----- NAVIGATION
+-------------------------------------
+map('n', '<S-Down>', function() vim.api.nvim_feedkeys('7j', 'n', true) end, desc 'Fast move down')
+map('n', '<S-Up>', function() vim.api.nvim_feedkeys('7', 'n', true) end, desc 'Fast move up')
+
+-------------------------------------
 ----- UPPER & LOWER & TITLE CASE
 -------------------------------------
 ---- Turn the word under cursor to UPPER_CASE
@@ -225,7 +234,6 @@ map('x', '$', 'g_')
 -------------------------------------
 ----- CUSTOM_UTILS MAPPINGS
 -------------------------------------
-local config_update = require 'config.update'
 
 local function start_search_and_replace()
   require('custom.search').start()
@@ -234,7 +242,8 @@ end
 
 map('n', '<leader>uc', '<cmd>Cp<CR>', desc 'Colorscheme picker') --colorscheme picker
 map('n', '<leader>ub', '<cmd>Bg<CR>', desc 'Change Background Color')
--- map('n', '<leader>cu', config_update.check,desc ( 'Update Neovim config' ))
+map('n', '<leader>cu', config_update.check, desc 'Check for config updates')
+map('n', '<leader>cU', config_update.update, desc 'Pull config updates')
 
 -- map('n', '<C-f>', start_search_and_replace, { desc = 'Search and replace' })
 -- map('n', '<M-f>', start_search_and_replace, { desc = 'Search and replace' })
@@ -284,7 +293,7 @@ map('n', '<Esc>', '<cmd>:noh<CR>', desc 'Clear searches') -- Clear search highli
 -------------------------------------
 
 --- toggle wrap ----------------------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>uw',
   title = 'Wrap',
   get = function() return vim.wo.wrap end,
@@ -295,7 +304,7 @@ ToggleOption.new {
 }
 
 --- toggle numbers -------------------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>ul',
   title = 'Line Number',
   get = function() return vim.wo.number end,
@@ -303,7 +312,7 @@ ToggleOption.new {
 }
 
 --- toggle relative numbers ----------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>ur',
   title = 'Relative Numbers',
   get = function() return vim.wo.relativenumber end,
@@ -311,7 +320,7 @@ ToggleOption.new {
 }
 
 --- toggle notify state ----------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>un',
   title = 'Notifications',
   get = function() return vim.g.notifications_enabled end,
@@ -319,7 +328,7 @@ ToggleOption.new {
 }
 
 --- toggle Spell check ----------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>us',
   title = 'Spell Check',
   get = function() return vim.wo.spell end,
@@ -327,7 +336,7 @@ ToggleOption.new {
 }
 
 --- toggle Statusline ----------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>uS',
   title = 'Statusline',
   get = function() return vim.opt.laststatus:get() end,
@@ -346,7 +355,7 @@ ToggleOption.new {
 }
 
 --- toggle Url highlight ----------------------------------------------------
-ToggleOption.new {
+toggle_option.new {
   map = '<leader>uu',
   title = 'Url Highlight',
   get = function() return vim.g.url_hl_enabled end,

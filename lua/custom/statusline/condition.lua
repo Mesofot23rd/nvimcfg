@@ -6,7 +6,7 @@
 
 local M = {}
 
-local env = require 'custom.statusline_components.env'
+local env = require 'custom.statusline.env'
 
 --- A condition function if the window is currently active.
 ---@return boolean # whether or not the window is currently active.

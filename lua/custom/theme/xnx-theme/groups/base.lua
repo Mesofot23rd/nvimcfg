@@ -1,4 +1,4 @@
----@type AstroThemeCallback
+
 local function callback(c, opts)
   local color = require 'custom.theme.xnx-theme.lib.color'
   local base = color.new(c.ui.base)

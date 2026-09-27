@@ -24,7 +24,9 @@ local groups = {
   'NeoTreeNormalNC',
 }
 
+---------------------------------------------------------------------------------
 ---Apply the selected background color
+---------------------------------------------------------------------------------
 ---@param color string|nil The color hex code or 'NONE' or nil to revert
 local function apply_bg(color, notify)
   if color == nil then
@@ -40,12 +42,12 @@ local function apply_bg(color, notify)
     vim.api.nvim_set_hl(0, group, { bg = color })
   end
 
-  if notify ~= false then
-    vim.notify('Changed background color to ' .. color, vim.log.levels.INFO)
-  end
+  if notify ~= false then vim.notify('Changed background color to ' .. color, vim.log.levels.INFO) end
 end
 
+---------------------------------------------------------------------------------
 ---Save the selected background choice to a file
+---------------------------------------------------------------------------------
 ---@param choice string The name of the choice (e.g., 'Astro_Bg' or 'Colorscheme')
 function M.save_bg(choice)
   local f = io.open(data_path, 'w')
@@ -55,26 +57,26 @@ function M.save_bg(choice)
   end
 end
 
+---------------------------------------------------------------------------------
 ---Load and apply the saved background color
+---------------------------------------------------------------------------------
 function M.load_bg()
   local f = io.open(data_path, 'r')
   if f then
     local choice = f:read '*all'
     f:close()
-    if choice ~= 'Colorscheme' and bgColors[choice] then
-      apply_bg(bgColors[choice], false)
-    end
+    if choice ~= 'Colorscheme' and bgColors[choice] then apply_bg(bgColors[choice], false) end
   end
 end
 
+---------------------------------------------------------------------------------
 ---Show a menu to select background color
+---------------------------------------------------------------------------------
 function M.select_bg()
   local options = { 'Colorscheme' }
 
   for name, value in pairs(bgColors) do
-    if type(value) == 'string' then
-      table.insert(options, name)
-    end
+    if type(value) == 'string' then table.insert(options, name) end
   end
 
   table.sort(options)

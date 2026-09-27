@@ -1,22 +1,26 @@
 local M = {}
 
+local pairs = {
+  h = { 'cpp', 'c', 'cc', 'cxx' },
+  hpp = { 'cpp', 'cxx' },
+  hxx = { 'cxx' },
+  hh = { 'cc' },
+
+  c = { 'h' },
+  cpp = { 'h', 'hpp' },
+  cc = { 'h', 'hh' },
+  cxx = { 'h', 'hpp', 'hxx' },
+}
+
+----------------------------------------------------------------------------------------
+--- Switch to Matching Source file to its respective Header file an vice-versa
+----------------------------------------------------------------------------------------
 function M.toggle()
   local file = vim.api.nvim_buf_get_name(0)
   if file == '' then return end
 
   local extension = vim.fn.fnamemodify(file, ':e'):lower()
   local filename = vim.fn.fnamemodify(file, ':t:r')
-
-  local pairs = {
-    h = { 'cpp', 'c', 'cc', 'cxx' },
-    hpp = { 'cpp', 'cxx' },
-    hxx = { 'cxx' },
-    hh = { 'cc' },
-    c = { 'h' },
-    cpp = { 'h', 'hpp' },
-    cc = { 'h', 'hh' },
-    cxx = { 'h', 'hpp', 'hxx' },
-  }
 
   local targets = pairs[extension]
   if not targets then
@@ -40,6 +44,7 @@ function M.toggle()
       return
     end
   end
+
   vim.notify(
     'Corresponding header or implementation file is missing in the project',
     vim.log.levels.ERROR,

@@ -1,14 +1,28 @@
---Setup Lazy
 local is_vscode = vim.g.vscode ~= nil
 local is_android = vim.fn.has 'Android'
 -- local is_windows = vim.fn.has 'Win32'
 
+---------------------------------------------------------------------------------
+-- Lazy Installation
+---------------------------------------------------------------------------------
+local lazypath = vim.env.LAZY or vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not (vim.env.LAZY or (vim.uv or vim.loop).fs_stat(lazypath)) then
+	-- stylua: ignore
+	vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+		lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+---------------------------------------------------------------------------------
+-- Conditional plugin loading
+---------------------------------------------------------------------------------
 local specs
 
---PLUGINS TO LOAD WHEN USING NEOVIM INSIDE VSCODE
+--plugins to load when using neovim inside vscode
 if is_vscode then
   specs = { { import = 'pluginz.lsp' } }
---PLUGINS TO LOAD WHEN USING NEOVIM ON ANDROID
+
+-- plugins to load when using neovim on android
 elseif is_android == 1 then
   specs = {
     { import = 'pluginz.dev.git' },
@@ -24,7 +38,8 @@ elseif is_android == 1 then
     { import = 'pluginz.navigation' },
     { import = 'pluginz.ui' },
   }
---PLUGINS TO LOAD WHEN USING NEOVIM ON LINUX/WINDOWS WSL
+
+--plugins to load when using neovim on PC
 else
   specs = {
     { import = 'pluginz.dev' },
@@ -37,6 +52,9 @@ else
   }
 end
 
+---------------------------------------------------------------------------------
+-- Lazy Setup
+---------------------------------------------------------------------------------
 require('lazy').setup {
   spec = specs,
   change_detection = {

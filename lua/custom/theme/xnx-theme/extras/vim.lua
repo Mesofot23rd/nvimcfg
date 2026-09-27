@@ -11,10 +11,10 @@ local mapping = {
 --- @param opts AstroThemeOpts
 function M.generate(colors, highlights, opts)
   opts.plugin_default = false
-  for p, n in pairs(require "astrotheme.groups.plugins") do
+  for p, n in pairs(require "custom.theme.xnx-theme.groups.plugins") do
     if not p:find "nvim" then opts.plugins[n] = true end
   end
-  highlights = require("astrotheme.lib.util").get_highlights(colors, opts)
+  highlights = require("custom.theme.xnx-theme.lib.util").get_highlights(colors, opts)
   local lines = {
     ([[
 let g:colors_name = "%s"

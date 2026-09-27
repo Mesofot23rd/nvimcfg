@@ -1,4 +1,4 @@
-local util = require "astrotheme.extras"
+local util = require "custom.theme.xnx-theme.extras"
 
 local M = {}
 
@@ -22,7 +22,7 @@ selection-background = ${ui.selection}
 palette = 0=${term.black}
 palette = 8=${term.bright_black}
 # red
-palette = 1=${term.red}       
+palette = 1=${term.red}
 palette = 9=${term.bright_red}
 # green
 palette = 2=${term.green}

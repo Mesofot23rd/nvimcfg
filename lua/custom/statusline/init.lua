@@ -1,6 +1,6 @@
-local component = require 'custom.statusline_components.components'
-local conditions = require 'custom.statusline_components.condition'
-local hl = require 'custom.statusline_components.hl'
+local component = require 'custom.statusline.components'
+local conditions = require 'custom.statusline.condition'
+local hl = require 'custom.statusline.hl'
 
 local M = {}
 

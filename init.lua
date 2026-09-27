@@ -9,32 +9,39 @@
 -- NeoVim Configuration Entry Point
 --------------------------------------------------------------------------------
 
--- Set leader key early
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
-if vim.g.vscode then --[LOAD_CONFIG FOR VSCODE]
-  require 'vs-code.key_mappings'
-  require 'config.diagnostics'
-  require 'config.key_mappings'
-else --[LOAD_CONFIG FOR LINUX]
-  require 'config.options' --basic neovim configuration
-  require 'config.key_mappings' --Loads Global Key_Mappings
-  require 'config.diagnostics' --Loads diagnostics related settings
-  require 'config.auto_commands'
-
-  require 'config.user_commands'
-  require('custom.code_runner.init').setup()
+local function load_source(source)
+  local status_ok, error = pcall(require, source)
+  if not status_ok then
+    vim.api.nvim_echo({ { 'Failed to load ' .. source .. '\n\n' .. error } }, true, { err = true })
+  end
 end
 
--- Lazy Installation
-local lazypath = vim.env.LAZY or vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.env.LAZY or (vim.uv or vim.loop).fs_stat(lazypath)) then
-	-- stylua: ignore
-	vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
-		lazypath })
+local function load_sources(source_files)
+  vim.loader.enable()
+  for _, source in ipairs(source_files) do
+    load_source(source)
+  end
 end
-vim.opt.rtp:prepend(lazypath)
+
+local function load_sources_async(source_files)
+  for _, source in ipairs(source_files) do
+    vim.defer_fn(function() load_source(source) end, 50)
+  end
+end
+
+
+-- Call the functions defined above.
+load_sources {
+  'base.options', --basic neovim configuration
+  'base.auto_commands',
+  'base.mappings', --Loads Global Key_Mappings
+  'base.diagnostics', --Loads diagnostics related settings
+}
 
 -- Load Lazy setup (will handle conditional plugin loading)
-require 'config.lazy_setup'
+load_sources_async { 'base.lazy_setup' }
+
+-- Auto-check for config updates on startup (like Lazy.nvim checker)
+vim.defer_fn(function()
+  require('custom.config_update').autocheck()
+end, 1000)

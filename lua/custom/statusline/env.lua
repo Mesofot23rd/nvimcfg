@@ -85,22 +85,24 @@ M.icons = {
   -- Misc
   PathSeparator = '',
   BreadcrumbSeparator = '',
+
+  --Operating systems
+  Linux = '',
+  MacOs = '',
+  BSD = 'BSD',
+  Windows = '',
+  Arch = '',
+  Android = '󱚟',
 }
 
 -- Buffer matchers for conditions
 M.buf_matchers = {
-  buftype = function(pattern_list, bufnr)
-    return vim.tbl_contains(pattern_list, vim.bo[bufnr or 0].buftype)
-  end,
-  filetype = function(pattern_list, bufnr)
-    return vim.tbl_contains(pattern_list, vim.bo[bufnr or 0].filetype)
-  end,
+  buftype = function(pattern_list, bufnr) return vim.tbl_contains(pattern_list, vim.bo[bufnr or 0].buftype) end,
+  filetype = function(pattern_list, bufnr) return vim.tbl_contains(pattern_list, vim.bo[bufnr or 0].filetype) end,
   bufname = function(pattern_list, bufnr)
     local name = vim.api.nvim_buf_get_name(bufnr or 0)
     for _, pattern in ipairs(pattern_list) do
-      if name:match(pattern) then
-        return true
-      end
+      if name:match(pattern) then return true end
     end
     return false
   end,

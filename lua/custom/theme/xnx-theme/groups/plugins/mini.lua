@@ -2,8 +2,8 @@
 local function callback(...)
   return vim.tbl_deep_extend(
     "force",
-    require "astrotheme.groups.plugins.ministarter"(...),
-    require "astrotheme.groups.plugins.miniicons"(...)
+    require "custom.theme.xnx-theme.groups.plugins.ministarter"(...),
+    require "custom.theme.xnx-theme.groups.plugins.miniicons"(...)
   )
 end
 

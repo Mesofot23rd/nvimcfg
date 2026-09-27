@@ -49,7 +49,7 @@ M.extras = {
 }
 
 function M.setup()
-  local util = require "astrotheme.lib.util"
+  local util = require "custom.theme.xnx-theme.lib.util"
 
   -- map of style to style name
   local palettes = {
@@ -65,9 +65,9 @@ function M.setup()
 
   for _, extra in ipairs(names) do
     local info = M.extras[extra]
-    local plugin = require("astrotheme.extras." .. extra)
+    local plugin = require("custom.theme.xnx-theme.extras." .. extra)
     for palette, palette_name in pairs(palettes) do
-      local config = require("astrotheme.lib.config").default
+      local config = require("custom.theme.xnx-theme.lib.config").default
       config.palette, config.plugin_default = palette, true
       local colors = util.set_palettes(config)
       local highlights = util.get_highlights(colors, config)
