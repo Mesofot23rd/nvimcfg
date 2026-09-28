@@ -24,18 +24,16 @@ function M.get_os_icon()
 
   if sysname:match 'Darwin' then
     os_icon = ''
-  elseif sysname:match 'Windows' then
+  elseif vim.fn.has 'win32' == 1 then
     os_icon ''
-  elseif sysname:match 'Windows_NT' then
-    os_icon ''
+  elseif vim.fn.has 'Android' == 1 then
+    os_icon = '󱚟'
   elseif sysname:match 'OpenBSD' then
     os_icon 'BSD'
   elseif sysname:match 'Linux' then
     os_icon = ''
-
     local release = vim.loop.os_uname().release
     if release:lower():match 'arch' then os_icon = '' end
-    if vim.fn.has 'Android' == 1 then os_icon = '󱚟' end
   end
 
   return os_icon

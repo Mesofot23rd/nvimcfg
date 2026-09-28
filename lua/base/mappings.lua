@@ -244,6 +244,8 @@ map('n', '<leader>uc', '<cmd>Cp<CR>', desc 'Colorscheme picker') --colorscheme p
 map('n', '<leader>ub', '<cmd>Bg<CR>', desc 'Change Background Color')
 map('n', '<leader>cu', config_update.check, desc 'Check for config updates')
 map('n', '<leader>cU', config_update.update, desc 'Pull config updates')
+map('n', '<leader>cs', config_update.status, desc 'Config git status')
+map('n', '<leader>cc', config_update.toggle, desc 'Toggle config auto-check')
 
 -- map('n', '<C-f>', start_search_and_replace, { desc = 'Search and replace' })
 -- map('n', '<M-f>', start_search_and_replace, { desc = 'Search and replace' })

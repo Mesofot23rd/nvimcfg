@@ -30,7 +30,7 @@ local groups = {
 ---@param color string|nil The color hex code or 'NONE' or nil to revert
 local function apply_bg(color, notify)
   if color == nil then
-    local colorscheme = vim.g.colors_name or 'astrodark'
+    local colorscheme = vim.g.colors_name or 'xnxdark'
     vim.cmd('colorscheme ' .. colorscheme)
     if notify ~= false then
       vim.notify('Reverted background color to ' .. colorscheme .. ' default', vim.log.levels.INFO)
