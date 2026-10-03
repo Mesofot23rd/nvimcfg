@@ -18,7 +18,7 @@ return {
       layout = {
         -- max_width = { 40, 0.2 },
         width = nil,
-        min_width = 10,
+        min_width = vim.o.columns * 0.4,
       },
     }
     -- You probably also want to set a keymap to toggle aerial

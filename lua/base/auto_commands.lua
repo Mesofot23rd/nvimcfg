@@ -33,14 +33,13 @@ autocmd('BufReadPost', {
 
 ---------------------------------------------------------------------------------
 ----SESSION AND COLORSCHEME RESTORE
----------------------------------------------------------------------------------
- autocmd('UIEnter', {
-   callback = function()
-     -- if vim.fn.argc() == 0 then require('persistence').load() end
-     require('custom.colorscheme_persist').load()
-     require('custom.bg_change').load_bg()
-   end,
- })
+--------------------------------------------------------------------------------
+autocmd('UIEnter', {
+  callback = function()
+    require('custom.colorscheme_persist').load()
+    require('custom.bg_change').load_bg()
+  end,
+})
 
 ---------------------------------------------------------------------------------
 ----SAVE COLORSCHEME TO FiLE ON WHEN COLORSCHEME IS CHANGED\
@@ -49,6 +48,8 @@ autocmd('BufReadPost', {
 autocmd('ColorScheme', {
   callback = function()
     -- require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
+
+    require('custom.statusline.hl').get_colors() -- Update statusline colors on colorscheme change
     require('custom.bg_change').load_bg()
   end,
 })

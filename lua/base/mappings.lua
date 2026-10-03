@@ -3,9 +3,10 @@
 --   local options = { noremap = true, silent = true }
 --   if opts then options = vim.tbl_extend('force', options, opts) end
 --   vim.keymap.set(mode, lhs, rhs, options)
--- end
+-- en:
+
 local toggle_option = require 'custom.toggle_option'
-local config_update = require 'custom.config_update'
+-- local config_update = require 'custom.config_update'
 
 ----------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------
@@ -37,7 +38,8 @@ map('n', '<M-r>', '<cmd>restart<CR>') --Restart neovim
 map('n', '<leader>ml', '<cmd>Lazy<cr>', desc 'Lazy Manager')
 map('n', '<leader>mm', '<cmd>Mason<cr>', desc 'Mason Manager')
 map('n', '<leader>mt', '<cmd>TSUpdate<cr>', desc 'Treesitter Update ')
-map('n', '<leader>md', '<cmd>DistroUpdate<cr>', desc 'Distro Update ')
+map('n', '<leader>mdu', '<cmd>DistroUpdate<cr>', desc 'Distro Update ')
+map('n', '<leader>mdr', '<cmd>DistroUpdateRevert<cr>', desc 'Distro Revert ')
 
 --- show documentation in a popup window ---------------------------------------
 -- map('n', '<leader>k', '<cmd>normal! K<cr>', desc 'Show Documentation')
@@ -242,10 +244,6 @@ end
 
 map('n', '<leader>uc', '<cmd>Cp<CR>', desc 'Colorscheme picker') --colorscheme picker
 map('n', '<leader>ub', '<cmd>Bg<CR>', desc 'Change Background Color')
-map('n', '<leader>cu', config_update.check, desc 'Check for config updates')
-map('n', '<leader>cU', config_update.update, desc 'Pull config updates')
-map('n', '<leader>cs', config_update.status, desc 'Config git status')
-map('n', '<leader>cc', config_update.toggle, desc 'Toggle config auto-check')
 
 -- map('n', '<C-f>', start_search_and_replace, { desc = 'Search and replace' })
 -- map('n', '<M-f>', start_search_and_replace, { desc = 'Search and replace' })

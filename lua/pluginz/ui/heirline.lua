@@ -15,11 +15,6 @@ return {
           colors = hl.get_colors(),
         },
       }
-
-      -- Update colors on colorscheme change
-      vim.api.nvim_create_autocmd({ 'ColorScheme', 'UIEnter' }, {
-        callback = function() require('heirline.utils').on_colorscheme(hl.get_colors()) end,
-      })
     end,
   },
 }

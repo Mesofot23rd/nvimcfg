@@ -32,8 +32,8 @@ function M.get_os_icon()
     os_icon 'BSD'
   elseif sysname:match 'Linux' then
     os_icon = ''
-    local release = vim.loop.os_uname().release
-    if release:lower():match 'arch' then os_icon = '' end
+    local release = vim.uv.os_gethostname()
+    if release:lower():find 'arch' then os_icon = '' end
   end
 
   return os_icon

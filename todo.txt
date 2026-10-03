@@ -2,3 +2,5 @@
 
 search then send to quickfix list
 
+--OPTIMIZE for when opening large files
+

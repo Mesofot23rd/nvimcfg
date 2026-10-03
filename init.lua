@@ -23,25 +23,27 @@ local function load_sources(source_files)
   end
 end
 
-local function load_sources_async(source_files)
-  for _, source in ipairs(source_files) do
-    vim.defer_fn(function() load_source(source) end, 50)
-  end
-end
-
-
 -- Call the functions defined above.
+--
+-- NOTE on the order (and on *not* deferring these requires):
+--
+--  * `base.options` has to come first: lazy.nvim reads `vim.g.mapleader` while
+--    resolving the `<leader>` keys used by the plugin specs.
+--  * Everything has to be loaded while this file is being sourced, i.e.
+--    synchronously. Startup events (`VimEnter`, `UIEnter`, `BufReadPre`,
+--    `BufReadPost`, ...) are dispatched before Neovim's event loop ever gets a
+--    chance to run a `vim.defer_fn` callback, so deferring the lazy setup means
+--    that, on a fresh start:
+--      - `require('<plugin module>')` from an autocmd fails with
+--        "module not found" (the plugin is not on the `runtimepath` yet and
+--        lazy's `require` autoloader is not registered yet), and
+--      - lazy never sees the `event = 'BufReadPre'|'BufReadPost'|'BufNewFile'|...`
+--        triggers of the first file, so those plugins stay unloaded until you
+--        open another buffer.
 load_sources {
   'base.options', --basic neovim configuration
   'base.auto_commands',
   'base.mappings', --Loads Global Key_Mappings
   'base.diagnostics', --Loads diagnostics related settings
+  'base.lazy_setup', --lazy.nvim setup (handles conditional plugin loading)
 }
-
--- Load Lazy setup (will handle conditional plugin loading)
-load_sources_async { 'base.lazy_setup' }
-
--- Auto-check for config updates on startup (like Lazy.nvim checker)
-vim.defer_fn(function()
-  require('custom.config_update').autocheck()
-end, 1000)
