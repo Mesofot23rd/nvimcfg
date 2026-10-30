@@ -1,0 +1,36 @@
+---@type AstroThemeCallback
+local function callback(c)
+  return {
+    CmpItemAbbr = { fg = c.ui.text },
+    CmpItemAbbrDeprecated = { fg = c.syntax.red, strikethrough = true },
+    CmpItemAbbrMatch = { fg = c.ui.text_match, bold = true },
+    CmpItemAbbrMatchFuzzy = { fg = c.ui.text_match, bold = true },
+    CmpItemKind = { fg = c.syntax.yellow },
+    CmpItemKindClass = "@type",
+    CmpItemKindColor = "@constant",
+    CmpItemKindConstant = "@constant",
+    CmpItemKindConstructor = "@constructor",
+    CmpItemKindEnum = "@type",
+    CmpItemKindEnumMember = "@field",
+    CmpItemKindEvent = "@type",
+    CmpItemKindField = "@field",
+    CmpItemKindFile = "@text.uri",
+    CmpItemKindFolder = "@constant",
+    CmpItemKindFunction = "@function",
+    CmpItemKindInterface = "@type",
+    CmpItemKindKeyword = "@keyword",
+    CmpItemKindMethod = "@method",
+    CmpItemKindModule = "@namespace",
+    CmpItemKindOperator = "@operator",
+    CmpItemKindProperty = "@property",
+    CmpItemKindReference = "@type",
+    CmpItemKindSnippet = "@constant",
+    CmpItemKimdStruct = "@type",
+    CmpItemKindText = "@text",
+    CmpItemKindTypeParameter = "@type",
+    CmpItemKindUnit = "@constant",
+    CmpItemKindValue = "@constant",
+    CmpItemKindVariable = "@variable",
+  }
+end
+return callback

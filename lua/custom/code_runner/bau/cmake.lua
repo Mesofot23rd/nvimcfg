@@ -1,0 +1,42 @@
+--- CMakeLists.txt bau actions
+
+local M = {}
+
+-- Backend - terminal tasks performed on option selected
+function M.action(option)
+  local utils = require 'custom.code_runner.utils'
+
+  -- Global: CMAKE_BUILD_DIR
+  local success, build_dir = pcall(vim.api.nvim_get_var, 'CMAKE_BUILD_DIR')
+  if not success or build_dir == '' then
+    build_dir = './build'
+  end
+
+  -- Global: CMAKE_BUILD_TYPE
+  local success, build_type = pcall(vim.api.nvim_get_var, 'CMAKE_BUILD_TYPE')
+  if not success or build_type == '' then
+    build_type = '""'
+  end
+
+  -- Global: CMAKE_CLEAN_FIRST
+  local clean_first_arg = ''
+  local _, clean_first = pcall(vim.api.nvim_get_var, 'CMAKE_CLEAN_FIRST')
+  if clean_first == 'true' then
+    clean_first_arg = '--clean-first'
+  end
+
+  -- Run command
+  local cmd_build = 'cmake -S . -B "' .. build_dir .. '" -DCMAKE_BUILD_TYPE=' .. build_type
+  local cmd_target = 'cmake --build "' .. build_dir .. '" --target ' .. option .. ' ' .. clean_first_arg
+  local cmd = 'mkdir -p "'
+    .. build_dir
+    .. '"'
+    .. ' && '
+    .. cmd_build -- Build to 'build' directory.
+    .. ' && '
+    .. cmd_target
+
+  utils.run_in_terminal(cmd)
+end
+
+return M
