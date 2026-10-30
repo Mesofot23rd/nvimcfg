@@ -94,3 +94,63 @@ end, { desc = 'Toggle location list' })
 
 --map('n', '<m-j>', '<cmd>cnext<cr>', {desc= 'Next Item in Quicklist'})
 --map('n', '<m-k>', '<cmd>cprev<cr>', {desc 'Prev Item in Quicklist'})
+--
+--
+---- Define LSP diagnostics icons defined in ../icons/icons.lua
+-- local signs = {
+--   { name = 'DiagnosticSignError', text = M.get_icon 'DiagnosticError', texthl = 'DiagnosticSignError' },
+--   { name = 'DiagnosticSignWarn', text = M.get_icon 'DiagnosticWarn', texthl = 'DiagnosticSignWarn' },
+--   { name = 'DiagnosticSignHint', text = M.get_icon 'DiagnosticHint', texthl = 'DiagnosticSignHint' },
+--   { name = 'DiagnosticSignInfo', text = M.get_icon 'DiagnosticInfo', texthl = 'DiagnosticSignInfo' },
+--   { name = 'DapStopped', text = M.get_icon 'DapStopped', texthl = 'DiagnosticWarn' },
+--   { name = 'DapBreakpoint', text = M.get_icon 'DapBreakpoint', texthl = 'DiagnosticInfo' },
+--   { name = 'DapBreakpointRejected', text = M.get_icon 'DapBreakpointRejected', texthl = 'DiagnosticError' },
+--   { name = 'DapBreakpointCondition', text = M.get_icon 'DapBreakpointCondition', texthl = 'DiagnosticInfo' },
+--   { name = 'DapLogPoint', text = M.get_icon 'DapLogPoint', texthl = 'DiagnosticInfo' },
+-- }
+-- for _, sign in ipairs(signs) do
+--   vim.fn.sign_define(sign.name, sign)
+-- end
+
+-- -- Define diagnostic opts
+-- local diagnostics_opts = {
+--   virtual_text = true,
+--   signs = {
+--     text = {
+--       [vim.diagnostic.severity.ERROR] = M.get_icon 'DiagnosticError',
+--       [vim.diagnostic.severity.HINT] = M.get_icon 'DiagnosticHint',
+--       [vim.diagnostic.severity.WARN] = M.get_icon 'DiagnosticWarn',
+--       [vim.diagnostic.severity.INFO] = M.get_icon 'DiagnosticInfo',
+--     },
+--     active = signs,
+--   },
+--   update_in_insert = true,
+--   underline = true,
+--   severity_sort = true,
+--   float = {
+--     focused = false,
+--     style = 'minimal',
+--     border = 'rounded',
+--     source = 'always',
+--     header = '',
+--     prefix = '',
+--   },
+-- }
+
+-- -- Define the table of options used by vim.g.diagnostics_mode in ../1-options.lua
+-- M.diagnostics_enum = {
+--   -- diagnostics off
+--   [0] = vim.tbl_deep_extend(
+--     'force',
+--     diagnostics_opts,
+--     { underline = false, virtual_text = false, signs = false, update_in_insert = false }
+--   ),
+--   -- status only
+--   vim.tbl_deep_extend('force', diagnostics_opts, { virtual_text = false, signs = false }),
+--   -- virtual text off, signs on
+--   vim.tbl_deep_extend('force', diagnostics_opts, { virtual_text = false }),
+--   -- all diagnostics on
+--   diagnostics_opts,
+-- }
+
+-- vim.diagnostic.config(M.diagnostics_enum[vim.g.diagnostics_mode])
