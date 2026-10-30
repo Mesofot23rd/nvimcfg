@@ -387,6 +387,20 @@ function _G.custom_statusline()
     }
   end
 
+  -- Terminal statusline
+  if bt == 'terminal' then
+    local mode_comp = is_active and M.component_mode { uname = true } or '%#StatusLineNC# '
+    return table.concat {
+      mode_comp,
+      '%#StatusLineNC#',
+      '%=',
+      M.file.icon(),
+      M.file.name(),
+      '%=',
+      M.position.bar(),
+    }
+  end
+
   -- Special buffers to ignore
   if ignored_filetypes[ft] or bt ~= '' then return '%#StatusLineNC#%=' end
 
@@ -394,18 +408,18 @@ function _G.custom_statusline()
   local width = vim.api.nvim_win_get_width(target_win)
 
   -- 3. Statusline for active small window (width < 60)
-  if width < 60 then
+  if width < 70 then
     return table.concat {
       M.component_mode { uname = true },
       '%=',
       M.position.ruler(),
       M.position.percentage(),
-      M.position.bar(),
+      M.component_mode(),
     }
   end
 
   -- 4. Statusline for active medium window (width < 100)
-  if width < 100 then
+  if width < 120 then
     local parts = {
       M.component_mode { uname = true },
       M.component_git(),
@@ -420,7 +434,7 @@ function _G.custom_statusline()
     table.insert(parts, M.component_lsp())
     table.insert(parts, M.position.ruler())
     table.insert(parts, M.position.percentage())
-    table.insert(parts, M.position.bar())
+    table.insert(parts, M.component_mode())
 
     -- table.insert(parts, M.component_mode())
     return table.concat(parts)
