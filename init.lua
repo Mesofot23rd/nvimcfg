@@ -34,5 +34,5 @@ load_sources {
 	"base.lazy_setup", -- Lazy bootstrap and configuration (handles conditional plugin loading)
 
 	"custom.statusline", -- Custom native statusline, winbar, tabline & statuscolumn
-	-- 'custom.code_runner'
+	"custom.code_runner", -- Detect and run projects (build-tool / entry-point aware)
 }

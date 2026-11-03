@@ -65,9 +65,10 @@ WHY? ....
 │   │   ├── mappings.lua                  # Global keymaps (arrows, fast scroll, clipboard, buffers)
 │   │   └── options.lua       			  # Editor options (sessionoptions, scrolloff, number,clipboard)
 │   │  
-│   ├── custom/                           # Bespoke personal scripts
-│   │   ├── code_runner/                  # Multi-language runner & compiler integration
-│   │   ├── statusline/
+│   ├── custom/                           # Bespoke personal scripts
+│   │   ├── code_runner/                  # Multi-language runner & compiler integration
+│   │   ├── code_runner.               # Project + current-file runner (<leader>rp / <leader>rc)
+│   │   ├── statusline/
 │   │   ├── theme/                        # xnxdark colorscheme & highlights
 │   │   ├── bg_change.lua
 │   │   ├── colorscheme_persist.lua
