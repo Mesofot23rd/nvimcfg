@@ -3,53 +3,56 @@ local autocmd = vim.api.nvim_create_autocmd
 --- augroup helper function ----------------------------------------------------
 
 local function augroup(name, opts)
-  opts = opts or { clear = true }
-  return vim.api.nvim_create_augroup('scratch_' .. name, opts)
+	opts = opts or { clear = true }
+	return vim.api.nvim_create_augroup("scratch_" .. name, opts)
 end
 
 ---------------------------------------------------------------------------------
 ---- MAKE SPECIAL BUFFERS "UNLISTED" AND PREVENT THEM FROM BEING REPLACED:
 ---------------------------------------------------------------------------------
-autocmd('BufEnter', {
-  pattern = { 'term://*', 'qf', 'help', 'oil://*', 'copilot-*', 'man' },
-  callback = function()
-    vim.bo.buflisted = false
-    vim.bo.bufhidden = 'hide'
-  end,
+autocmd("BufEnter", {
+	pattern = { "term://*", "qf", "help", "oil://*", "copilot-*", "man" },
+	callback = function()
+		vim.bo.buflisted = false
+		vim.bo.bufhidden = "hide"
+	end,
 })
 
 ---------------------------------------------------------------------------------
 ---- RESTORE_CURSOR  go to last loc when opening a buffer
 ---------------------------------------------------------------------------------
-autocmd('BufReadPost', {
-  callback = function(args)
-    local buf = args.buf
-    if vim.b[buf].last_loc_restored or vim.tbl_contains({ 'gitcommit' }, vim.bo[buf].filetype) then return end
-    vim.b[buf].last_loc_restored = true
-    local mark = vim.api.nvim_buf_get_mark(buf, '"')
-    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(buf) then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
-  end,
+autocmd("BufReadPost", {
+	group = augroup "last_loc",
+	callback = function(event)
+		local exclude = { "gitcommit" }
+		local buf = event.buf
+		if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then return end
+		vim.b[buf].lazyvim_last_loc = true
+		local mark = vim.api.nvim_buf_get_mark(buf, '"')
+		local lcount = vim.api.nvim_buf_line_count(buf)
+		if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
+	end,
 })
 
 ---------------------------------------------------------------------------------
 ----SESSION AND COLORSCHEME RESTORE
 --------------------------------------------------------------------------------
-autocmd('UIEnter', {
-  callback = function()
-    require('custom.colorscheme_persist').load()
-    require('custom.bg_change').load_bg()
-  end,
+autocmd("UIEnter", {
+	callback = function()
+		require("custom.colorscheme_persist").load()
+		require("custom.bg_change").load_bg()
+	end,
 })
 
 ---------------------------------------------------------------------------------
 ----SAVE COLORSCHEME TO FiLE ON WHEN COLORSCHEME IS CHANGED\
 ----RE-APPLY BACKGROUND COLOR ON COLORSCHEME CHANGE
 ---------------------------------------------------------------------------------
-autocmd('ColorScheme', {
-  callback = function()
-    -- require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
-    require('custom.bg_change').load_bg()
-  end,
+autocmd("ColorScheme", {
+	callback = function()
+		-- require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
+		require("custom.bg_change").load_bg()
+	end,
 })
 
 ---------------------------------------------------------------------------------
@@ -63,31 +66,31 @@ autocmd('ColorScheme', {
 ---------------------------------------------------------------------------------
 ---- CLOSE THE FOLLOWING PATTERN WITH `Q`
 ---------------------------------------------------------------------------------
-autocmd('FileType', {
-  pattern = {
-    'checkhealth',
-    'qf',
-    'help',
-    'man',
-    'lspinfo',
-    'PlenaryTestPopup',
-    'checkhealth',
-    'dap-float',
-    'dbout',
-    'gitsigns-blame',
-    'grug-far',
-    'help',
-    'lspinfo',
-    'neotest-output',
-    'neotest-output-panel',
-    'neotest-summary',
-    'notify',
-    'qf',
-    'spectre_panel',
-    'startuptime',
-    'tsplayground',
-  },
-  callback = function() vim.keymap.set('n', 'q', ':close<CR>', { noremap = true, silent = true }) end,
+autocmd("FileType", {
+	pattern = {
+		"checkhealth",
+		"qf",
+		"help",
+		"man",
+		"lspinfo",
+		"PlenaryTestPopup",
+		"checkhealth",
+		"dap-float",
+		"dbout",
+		"gitsigns-blame",
+		"grug-far",
+		"help",
+		"lspinfo",
+		"neotest-output",
+		"neotest-output-panel",
+		"neotest-summary",
+		"notify",
+		"qf",
+		"spectre_panel",
+		"startuptime",
+		"tsplayground",
+	},
+	callback = function() vim.keymap.set("n", "q", ":close<CR>", { noremap = true, silent = true }) end,
 })
 
 ---------------------------------------------------------------------------------
@@ -113,76 +116,124 @@ autocmd('FileType', {
 ---------------------------------------------------------------------------------
 ---- C/C++ HEADER TOGGLE
 ---------------------------------------------------------------------------------
-autocmd('FileType', {
-  pattern = { 'c', 'cpp' },
-  callback = function()
-    vim.keymap.set(
-      'n',
-      'T',
-      function() require('custom.header_switch').toggle() end,
-      { buffer = true, desc = 'Toggle between header and implementation files' }
-    )
-  end,
+autocmd("FileType", {
+	pattern = { "c", "cpp" },
+	callback = function()
+		vim.keymap.set(
+			"n",
+			"T",
+			function() require("custom.header_switch").toggle() end,
+			{ buffer = true, desc = "Toggle between header and implementation files" }
+		)
+	end,
 })
 
 ---------------------------------------------------------------------------------
 ---- DISABLE AUTO-COMMENT ON NEW LINE
 ---------------------------------------------------------------------------------
--- autocmd('FileType', {
---   pattern = '*',
---   callback = function() vim.opt_local.formatoptions:remove { 'r', 'o' } end,
--- })
+
+autocmd("FileType", {
+	pattern = "*",
+	callback = function() vim.opt_local.formatoptions:remove { "r", "o" } end,
+})
 
 ---------------------------------------------------------------------------------
+-- TODO: transfer to a mapping
 ----  wrap and check for spell in text filetypes
 ---------------------------------------------------------------------------------
--- vim.api.nvim_create_autocmd('FileType', {
---   group = augroup 'wrap_spell',
---   pattern = { 'text', 'plaintex', 'typst', 'gitcommit', 'markdown' },
---   callback = function()
---     vim.opt_local.wrap = true
---     vim.opt_local.spell = true
---   end,
--- })
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup "wrap_spell",
+	pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
+	callback = function()
+		vim.opt_local.wrap = true
+		-- vim.opt_local.spell = true
+	end,
+})
 
 ---------------------------------------------------------------------------------
 ---- resize splits if window got resized
 ---------------------------------------------------------------------------------
-vim.api.nvim_create_autocmd({ 'VimResized' }, {
-  group = augroup 'resize_splits',
-  callback = function()
-    local current_tab = vim.fn.tabpagenr()
-    vim.cmd 'tabdo wincmd ='
-    vim.cmd('tabnext ' .. current_tab)
-  end,
+vim.api.nvim_create_autocmd({ "VimResized" }, {
+	group = augroup "resize_splits",
+	callback = function()
+		local current_tab = vim.fn.tabpagenr()
+		vim.cmd "tabdo wincmd ="
+		vim.cmd("tabnext " .. current_tab)
+	end,
+})
+
+-- Fix conceallevel for json files
+vim.api.nvim_create_autocmd({ "FileType" }, {
+	group = augroup "json_conceal",
+	pattern = { "json", "jsonc", "json5" },
+	callback = function() vim.opt_local.conceallevel = 0 end,
 })
 
 ---------------------------------------------------------------------------------
 ---- -- Highlight on yank
 ---------------------------------------------------------------------------------
-vim.api.nvim_create_autocmd('TextYankPost', {
-  group = augroup 'highlight_yank',
-  callback = function()
-    if vim.fn.has 'nvim-0.13' == 1 then
-      vim.hl.hl_op()
-    else
-      (vim.hl or vim.highlight).on_yank()
-    end
-  end,
+vim.api.nvim_create_autocmd("TextYankPost", {
+	group = augroup "highlight_yank",
+	callback = function()
+		if vim.fn.has "nvim-0.13" == 1 then
+			vim.hl.hl_op()
+		else
+			(vim.hl or vim.highlight).on_yank()
+		end
+	end,
 })
+
+---------------------------------------------------------------------------------
+-- 'autoread' gets its own file watchers, so a file changed outside nvim is read
+-- back without a :checktime on focus.
+---------------------------------------------------------------------------------
+local resize_timer
+vim.api.nvim_create_autocmd("VimResized", {
+	group = augroup "resize_splits",
+	callback = function()
+		if resize_timer then
+			resize_timer:stop()
+			resize_timer:close()
+		end
+		local tab = vim.fn.tabpagenr()
+		resize_timer = vim.defer_fn(function()
+			resize_timer = nil
+			vim.cmd "tabdo wincmd ="
+			vim.cmd("tabnext " .. tab)
+		end, 100)
+	end,
+})
+
+-- vim.api.nvim_create_autocmd('InsertEnter', {
+--   group = augroup 'insert_ui_perf',
+--   callback = function()
+--     vim.wo.cursorline = false
+--     vim.wo.relativenumber = false
+--     vim.wo.number = true -- keep absolute numbers
+--   end,
+-- })
+
+-- vim.api.nvim_create_autocmd('InsertLeave', {
+--   group = augroup 'insert_ui_perf',
+--   callback = function()
+--     vim.wo.cursorline = true
+--     vim.wo.relativenumber = true
+--   end,
+-- })
+
 ---------------------------------------------------------------------------------
 ---- CUSTOM USER COMMANDS
 ---------------------------------------------------------------------------------
 -- CHANGE BACKGROUND COLOR
 vim.api.nvim_create_user_command(
-  'Bg',
-  function() require('custom.bg_change').select_bg() end,
-  { desc = 'Select Background Color' }
+	"Bg",
+	function() require("custom.bg_change").select_bg() end,
+	{ desc = "Select Background Color" }
 )
 
 -- COLORSCHEME SELECT
 vim.api.nvim_create_user_command(
-  'Cp',
-  function() require('custom.colorscheme_persist').colorscheme_picker() end,
-  { desc = 'Select ColorScheme' }
+	"Cp",
+	function() require("custom.colorscheme_persist").colorscheme_picker() end,
+	{ desc = "Select ColorScheme" }
 )

@@ -15,7 +15,7 @@ return {
     opts = {
       log_level = 'error',
       suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
-      show_auto_restore_notif = true,
+      -- show_auto_restore_notif = true,
       close_filetypes_on_save = { 'checkhealth' },
 
       -- Only save meaningful buffers

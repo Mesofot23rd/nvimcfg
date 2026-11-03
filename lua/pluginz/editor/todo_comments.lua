@@ -7,14 +7,17 @@
 -- FIXME: a fixme
 
 return {
-  'folke/todo-comments.nvim',
-  lazy = false,
-  -- cmd = { 'TodoTrouble', 'TodoLocList', 'TodoQuickFix' },
+	"folke/todo-comments.nvim",
+	dependencies = { "nvim-lua/plenary.nvim" },
 
-  dependencies = { 'nvim-lua/plenary.nvim' },
-  config = function()
-    vim.keymap.set('n', ']t', function() require('todo-comments').jump_next() end, { desc = 'Next TODO' })
+	keys = {
+		{ "]t", function() require("todo-comments").jump_next() end, desc = "Next Todo Comment" },
+		{ "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
+	},
+	config = function()
+		require("todo-comments").setup {
 
-    vim.keymap.set('n', '[t', function() require('todo-comments').jump_prev() end, { desc = 'Previous TODO' })
-  end,
+			signs = false, -- show icons in the signs column
+		}
+	end,
 }
