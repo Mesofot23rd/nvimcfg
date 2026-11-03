@@ -36,6 +36,3 @@ load_sources {
 	"custom.statusline", -- Custom native statusline, winbar, tabline & statuscolumn
 	-- 'custom.code_runner'
 }
-
-vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr })
-vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })

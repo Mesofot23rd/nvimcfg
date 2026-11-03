@@ -1,0 +1,72 @@
+
+
+code_action({opts})                                *vim.lsp.buf.code_action()*
+    Selects a code action (LSP: "textDocument/codeAction" request) available
+    at cursor position.
+
+    Parameters: ~
+      • {opts}  (`table?`) A table with the following fields:
+                • {apply}? (`boolean`) When set to `true`, and there is just
+                  one remaining action (after filtering), the action is
+                  applied without user query.
+                • {context}? (`table`) Corresponds to `lsp.CodeActionContext`,
+                  but all fields are optional:
+                  • {diagnostics}? (`lsp.Diagnostic[]`) Inferred from the
+                    current position if not provided.
+                  • {only}? (`lsp.CodeActionKind[]`) `CodeActionKind`s used to
+                    filter the code actions. Most servers support values like
+                    "refactor" or "quickfix".
+                  • {triggerKind}? (`lsp.CodeActionTriggerKind`) Why code
+                    actions were requested.
+                • {filter}?
+                  (`fun(x: lsp.CodeAction|lsp.Command, client_id: integer):boolean`)
+                  Predicate taking a code action or command and the provider's
+                  ID. If it returns false, the action is filtered out.
+                • {range}? (`{start: integer[], end: integer[]}`) Range for
+                  which code actions should be requested. If in visual mode
+                  this defaults to the active selection. Table must contain
+                  `start` and `end` keys with {row,col} tuples using mark-like
+                  indexing. See |api-indexing|
+
+document_symbol({opts})                        *vim.lsp.buf.document_symbol()*
+    Lists all symbols in the current buffer in the |location-list|.
+
+    Parameters: ~
+      • {opts}  (`vim.lsp.ListOpts?`) See |vim.lsp.ListOpts|.
+
+
+workspace_diagnostics({opts})            *vim.lsp.buf.workspace_diagnostics()*
+    Request workspace-wide diagnostics.
+
+    Parameters: ~
+      • {opts}  (`table?`) A table with the following fields:
+                • {client_id}? (`integer`) Only request diagnostics from the
+                  indicated client. If nil, the request is sent to all
+                  clients.
+
+    See also: ~
+      • https://microsoft.github.io/language-server-protocol/specifications/specification-current/#workspace_dagnostics
+
+workspace_symbol({query}, {opts})             *vim.lsp.buf.workspace_symbol()*
+    Lists all symbols in the current workspace in the quickfix window.
+
+    The list is filtered against {query}; if the argument is omitted from the
+    call, the user is prompted to enter a string on the command line. An empty
+    string means no filtering is done.
+
+    Parameters: ~
+      • {query}  (`string?`) optional
+      • {opts}   (`vim.lsp.ListOpts?`) See |vim.lsp.ListOpts|.
+
+function M.symbol_kind(kind)
+  if not kinds then
+    kinds = {}
+    for k, v in pairs(vim.lsp.protocol.SymbolKind) do
+      if type(v) == "number" then
+        kinds[v] = k
+      end
+    end
+  end
+  return kinds[kind]
+end
+

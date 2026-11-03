@@ -62,9 +62,6 @@ return {
 		--- @type blink.cmp.Config
 		opts = {
 			keymap = {
-
-				-- completion.menu.draw.columns = { { "label", "label_description", gap = 1 }, { "kind_icon", "kind" } },
-
 				-- 'default' (recommended) for mappings similar to built-in completions
 				--   <c-y> to accept ([y]es) the completion.
 				--    This will auto-import if your LSP supports it.
@@ -77,21 +74,16 @@ return {
 				-- you will need to read `:help ins-completion`
 				--
 				-- No, but seriously. Please read `:help ins-completion`, it is really good!
-				--
-				-- All presets have the following mappings:
-				-- <tab>/<s-tab>: move to right/left of your snippet expansion
-				-- <c-space>: Open menu or open docs if already open
-				-- <c-n>/<c-p> or <up>/<down>: Select next/previous item
-				-- <c-e>: Hide menu
-				-- <c-k>: Toggle signature help
-				--
+
 				-- See :h blink-cmp-config-keymap for defining your own keymap
 				preset = "default",
 
 				["<CR>"] = { "accept_and_enter", "fallback" },
-				["<Tab>"] = { "select_next", "fallback" },
-				["<S-Tab>"] = { "select_prev", "fallback" },
-				["<Esc>"] = { "hide" },
+				-- ["<Tab>"] = { "insert_next" },
+				-- ["<S-Tab>"] = { "insert_prev" },
+
+				["<Tab>"] = { "select_next" },
+				["<S-Tab>"] = { "select_prev" },
 
 				-- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
 				--    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -107,7 +99,7 @@ return {
 				-- By default, you may press `<c-space>` to show the documentation.
 				-- Optionally, set `auto_show = true` to show the documentation after a delay.
 				documentation = { auto_show = false, auto_show_delay_ms = 500 },
-				ghost_text = { enabled = true },
+				-- ghost_text = { enabled = true },
 				menu = {
 					draw = {
 						columns = {
@@ -126,7 +118,16 @@ return {
 			},
 			cmdline = {
 				keymap = { preset = "inherit" },
-				completion = { menu = { auto_show = true } },
+				completion = {
+					menu = {
+						auto_show = true,
+						draw = {
+							columns = {
+								{ "label", "label_description" },
+							},
+						},
+					},
+				},
 			},
 
 			snippets = { preset = "luasnip" },
