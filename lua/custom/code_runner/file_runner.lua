@@ -1,222 +1,218 @@
+--- Run the file in the current buffer as a standalone program.
+---
+--- This is the single-file counterpart to the project runner.  It reuses the
+--- same terminal window, notifications, and process state, so `:ProjectStop`
+--- works for file runs too.  Compiled files are written below
+--- `<root>/.build/file_runner/`, keeping the project root clean.
 local M = {}
 
-local commands = {
-  python = 'python3 -u "$dir/$fileName"',
-  javascript = 'node "$dir/$fileName"',
-  typescript = 'ts-node "$dir/$fileName"',
-  lua = 'lua "$dir/$fileName"',
-  ruby = 'ruby "$dir/$fileName"',
-  go = 'go run "$filePath"',
-  c = 'gcc "$dir/$fileName" -o "$dir/$fileNameWithoutExt" && "$dir/$fileNameWithoutExt"',
-  cpp = 'g++ "$dir/$fileName" -o "$dir/$fileNameWithoutExt" && "$dir/$fileNameWithoutExt"',
-  java = 'javac "$dir/$fileName" && java -cp "$dir" "$fileNameWithoutExt"',
-  sh = 'bash "$dir/$fileName"',
-  rust = 'rustc "$dir/$fileName" -o "$dir/$fileNameWithoutExt" && "$dir/$fileNameWithoutExt"',
-  php = 'php "$dir/$fileName"',
-  perl = 'perl "$dir/$fileName"',
-  zig = 'zig run "$dir/$fileName"',
-  kotlin = 'kotlinc "$dir/$fileName" -include-runtime -d "$dir/$fileNameWithoutExt.jar" && java -jar "$dir/$fileNameWithoutExt.jar"',
-  swift = 'swift "$dir/$fileName"',
-  r = 'Rscript "$dir/$fileName"',
-  julia = 'julia "$dir/$fileName"',
-  elixir = 'elixir "$dir/$fileName"',
-  haskell = 'runhaskell "$dir/$fileName"',
-  scala = 'scala "$dir/$fileName"',
-  dart = 'dart run "$dir/$fileName"',
-  html = 'live-server --browser=firefox --port=8080 $dir',
+local util = require "custom.code_runner.util"
+local config = require "custom.code_runner.config"
+local runner = require "custom.code_runner.runner"
+local languages = require "custom.code_runner.providers.languages"
+
+local notify = runner.notify
+
+--------------------------------------------------------------------------------
+-- Command builders
+--------------------------------------------------------------------------------
+
+--- Directory used for single-file build artifacts.
+--- @param root string
+--- @return string
+local function artifact_dir(root) return util.join(root, config.get().build_dir or ".build", "file_runner") end
+
+--- Java's main class, including its package when one is declared.
+--- @param entry string
+--- @return string
+local function java_main_class(entry)
+	local content = util.read_file(entry) or ""
+	local package = content:match "^%s*package%s+([%w_%.]+)%s*;"
+	local class = util.stem(entry)
+	return package and (package .. "." .. class) or class
+end
+
+--- Build and run commands for compiled languages.
+---
+--- Each entry returns `build, run`, both already shell-quoted.
+local compiled = {
+	c = function(ctx)
+		local compiler = util.first_executable("cc", "gcc", "clang") or "cc"
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			compiler .. " -O2 " .. util.q(ctx.entry) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	cpp = function(ctx)
+		local compiler = util.first_executable("c++", "g++", "clang++") or "c++"
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			compiler .. " -O2 " .. util.q(ctx.entry) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	rust = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"rustc -O " .. util.q(ctx.entry) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	go = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"go build -o " .. util.q(ctx.exe) .. " " .. util.q(ctx.entry),
+		},
+			util.q(ctx.exe)
+	end,
+
+	zig = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"zig build-exe " .. util.q(ctx.entry) .. " -O ReleaseFast -femit-bin=" .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	swift = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"swiftc -O " .. util.q(ctx.entry) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	java = function(ctx)
+		local classes = util.join(ctx.build_dir, "classes")
+		return util.chain {
+			"mkdir -p " .. util.q(classes),
+			"javac -d " .. util.q(classes) .. " " .. util.q(ctx.entry),
+		},
+			"java -cp " .. util.q(classes) .. " " .. util.q(java_main_class(ctx.entry))
+	end,
+
+	kotlin = function(ctx)
+		local jar = util.join(ctx.build_dir, ctx.name .. ".jar")
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"kotlinc " .. util.q(ctx.entry) .. " -include-runtime -d " .. util.q(jar),
+		},
+			"java -jar " .. util.q(jar)
+	end,
+
+	fortran = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"gfortran -O2 " .. util.q(ctx.entry) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	asm = function(ctx)
+		local object = util.join(ctx.build_dir, ctx.name .. ".o")
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"nasm -f elf64 " .. util.q(ctx.entry) .. " -o " .. util.q(object),
+			"ld " .. util.q(object) .. " -o " .. util.q(ctx.exe),
+		},
+			util.q(ctx.exe)
+	end,
+
+	nim = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"nim c -d:release --out:" .. util.q(ctx.exe) .. " " .. util.q(ctx.entry),
+		},
+			util.q(ctx.exe)
+	end,
+
+	crystal = function(ctx)
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			"crystal build --release -o " .. util.q(ctx.exe) .. " " .. util.q(ctx.entry),
+		},
+			util.q(ctx.exe)
+	end,
+
+	d = function(ctx)
+		local compiler = util.first_executable("dmd", "ldc2", "gdc") or "dmd"
+		local output = compiler == "gdc" and ("-o " .. util.q(ctx.exe)) or ("-of=" .. util.q(ctx.exe))
+		return util.chain {
+			"mkdir -p " .. util.q(ctx.build_dir),
+			compiler .. " -O " .. output .. " " .. util.q(ctx.entry),
+		},
+			util.q(ctx.exe)
+	end,
 }
 
-local extensions = {
-  python = { 'py', 'pyw' },
-  javascript = { 'js', 'mjs', 'cjs' },
-  typescript = { 'ts', 'mts', 'cts' },
-  lua = { 'lua' },
-  ruby = { 'rb' },
-  go = { 'go' },
-  c = { 'c', 'h' },
-  cpp = { 'cpp', 'cc', 'cxx', 'c++', 'hpp' },
-  java = { 'java' },
-  sh = { 'sh', 'bash', 'zsh' },
-  rust = { 'rs' },
-  php = { 'php' },
-  perl = { 'pl', 'pm' },
-  zig = { 'zig' },
-  kotlin = { 'kt', 'kts' },
-  swift = { 'swift' },
-  r = { 'r', 'R' },
-  julia = { 'jl' },
-  elixir = { 'ex', 'exs' },
-  haskell = { 'hs' },
-  scala = { 'scala', 'sc' },
-  dart = { 'dart' },
-  html = { 'html' },
-}
+--------------------------------------------------------------------------------
+-- Public API
+--------------------------------------------------------------------------------
 
--- State
-M.watch_handle = nil
-M.lock = false --flag to indicate if terminal is busy or not
-M.interrupting = false
-M.prompt_active = false
-M.coderun_dir = nil --directory to run code_runner in
+--- Build a runnable plan for the current buffer without starting it.
+--- @param bufnr integer|nil
+--- @return table|nil plan
+--- @return string|nil error
+function M.resolve(bufnr)
+	bufnr = bufnr or vim.api.nvim_get_current_buf()
+	local path = vim.api.nvim_buf_get_name(bufnr)
+	if not path or path == "" then return nil, "The current buffer is not saved to a file." end
 
--------------------------------------------------------------------------------
---- @type function : Generate command by substituting variables
--------------------------------------------------------------------------------
+	local root = vim.fn.getcwd()
+	local entry = util.abspath(path)
+	local language = languages.from_buffer(bufnr)
+	if not language then
+		local extension = util.extension(entry)
+		return nil, "Unsupported file type: " .. (extension ~= "" and extension or "<none>")
+	end
 
----@param command_template string
----@return string
-function M.generate_command(command_template)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local file_path = vim.api.nvim_buf_get_name(bufnr)
+	local ctx = {
+		root = root,
+		entry = entry,
+		name = util.stem(entry),
+		build_dir = artifact_dir(root),
+	}
+	ctx.exe = util.join(ctx.build_dir, ctx.name)
 
-  if file_path == '' then return command_template end
+	local plan = {
+		id = "file:" .. language.id .. ":" .. ctx.name,
+		label = "file " .. language.label .. " - " .. util.basename(entry),
+		root = root,
+		entry = entry,
+		language = language.id,
+	}
 
-  local file_dir = vim.fn.fnamemodify(file_path, ':p:h')
-  local file_name = vim.fn.fnamemodify(file_path, ':t')
-  local file_name_without_ext = vim.fn.fnamemodify(file_path, ':t:r')
-  local file_extension = vim.fn.fnamemodify(file_path, ':e')
+	local build_command = compiled[language.id]
+	if build_command then
+		plan.kind = "compiled"
+		plan.build, plan.run = build_command(ctx)
+		return plan
+	end
 
-  -- Escape special characters for shell
-  local function escape(s) return s:gsub('\\', '\\\\') end
+	if language.kind == "interpreted" and language.run then
+		plan.kind = "interpreted"
+		plan.run = language.run(ctx)
+		return plan
+	end
 
-  local substitutions = {
-    ['$filePath'] = escape(file_path),
-    ['$fileNameWithoutExt'] = escape(file_name_without_ext),
-    ['$fileName'] = escape(file_name),
-    ['$fileExtension'] = escape(file_extension),
-    ['$dir'] = escape(file_dir),
-    ['$coderunDir'] = escape(M.coderun_dir or file_dir),
-  }
-
-  local cmd = command_template
-  -- Sort by length descending to avoid partial replacements
-  local keys = {}
-  for k in pairs(substitutions) do
-    table.insert(keys, k)
-  end
-  table.sort(keys, function(a, b) return #a > #b end)
-
-  for _, key in ipairs(keys) do
-    cmd = cmd:gsub('%' .. key:gsub('%$', '%$'), substitutions[key])
-  end
-
-  return cmd
+	return nil, "No single-file runner for " .. language.label .. "."
 end
 
--------------------------------------------------------------------------------
---- @type function :Get language from file extension
--------------------------------------------------------------------------------
-
----@param extension string
----@return string|nil
-local function get_language_from_extension(extension)
-  for lang, exts in pairs(extensions) do
-    for _, ext in ipairs(exts) do
-      if ext:lower() == extension:lower() then return lang end
-    end
-  end
-  return nil
-end
-
--------------------------------------------------------------------------------
---- @type function : Run code for current buffer
--------------------------------------------------------------------------------
-
-function M.run()
-  -- Fallback to language detection
-  local bufnr = vim.api.nvim_get_current_buf()
-  local file_path = vim.api.nvim_buf_get_name(bufnr)
-
-  if file_path == '' then
-    vim.notify('No file is currently open', vim.log.levels.WARN, { title = '[CodeRunner]' })
-    return
-  end
-
-  local extension = vim.fn.fnamemodify(file_path, ':e')
-  local language = get_language_from_extension(extension)
-
-  if not language then
-    vim.notify('Unsupported file extension: ' .. extension, vim.log.levels.WARN, { title = '[CodeRunner]' })
-    return
-  end
-
-  local command_template = commands[language]
-  if not command_template then
-    vim.notify('No command configured for: ' .. language, vim.log.levels.WARN, { title = '[CodeRunner]' })
-    return
-  end
-
-  local cmd = M.generate_command(command_template)
-  M.run_command(cmd)
-end
-
--------------------------------------------------------------------------------
---- @type function :Execute command in terminal
--------------------------------------------------------------------------------
-
----@param cmd string
-function M.run_command(cmd)
-  if M.lock then
-    vim.notify('CodeRunner is busy, please wait...', vim.log.levels.WARN, { title = '[CodeRunner]' })
-    return
-  end
-
-  M.lock = true
-
-  -- Prepend cd if we have a coderun directory
-  if M.coderun_dir then
-    local escaped_dir = vim.fn.shellescape(M.coderun_dir)
-    cmd = 'cd ' .. escaped_dir .. ' && ' .. cmd
-  end
-
-  --[[   utils.log_debug('Executing: ' .. cmd) ]]
-
-  -- Try multiple terminal integrations
-  local executed = false
-
-  if not executed then
-    local ok, _ = pcall(require, 'nvterm')
-    if ok then
-      -- require('nvterm.terminal').new 'vertical'
-      require('nvterm.terminal').send(' ' .. cmd .. ' ', 'vertical')
-      -- require('custom.code_runner.utils').run_in_terminal(cmd)
-      executed = true
-      vim.notify('Executed via nvTerm', vim.log.levels.INFO, { title = '[CodeRunner]' })
-    end
-  end
-
-  -- Fallback to built-in terminal
-  if not executed then
-    vim.cmd('split | terminal ' .. cmd)
-    executed = true
-    vim.notify('Executed via built-in terminal', vim.log.levels.INFO, { title = '[CodeRunner]' })
-  end
-
-  -- Release lock after delay
-  vim.defer_fn(function() M.lock = false end, 500)
-end
--------------------------------------------------------------------------------
---- @type function : Send interrupt signal to toggleterm terminal #13
--------------------------------------------------------------------------------
-
-function M.send_interrupt()
-  if M.interrupting then return end
-  M.interrupting = true
-
-  for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[buf_id].buftype == 'terminal' and vim.b[buf_id].toggle_number == 13 then
-      vim.notify('Sent interrupt to terminal #13', vim.log.levels.INFO, { title = '[CodeRunner]' })
-
-      local chan = vim.b[buf_id].terminal_job_id
-      if chan then
-        vim.fn.chansend(chan, '\x03')
-        vim.notify('Sent interrupt to terminal #13', vim.log.levels.INFO, { title = '[CodeRunner]' })
-        break
-      end
-    end
-  end
-
-  M.interrupting = false
+--- Run the current buffer as a standalone file.
+--- @param opts table|nil  { bufnr = integer }
+--- @return boolean
+function M.run(opts)
+	opts = opts or {}
+	local plan, err = M.resolve(opts.bufnr)
+	if not plan then
+		notify(err or "Cannot run the current file.", vim.log.levels.WARN)
+		return false
+	end
+	return runner.run(plan, { mode = "all" })
 end
 
 return M
