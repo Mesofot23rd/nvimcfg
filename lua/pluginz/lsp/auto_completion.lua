@@ -78,7 +78,7 @@ return {
 				-- See :h blink-cmp-config-keymap for defining your own keymap
 				preset = "default",
 
-				["<CR>"] = { "accept_and_enter", "fallback" },
+				["<CR>"] = { "accept", "fallback" },
 				-- ["<Tab>"] = { "insert_next" },
 				-- ["<S-Tab>"] = { "insert_prev" },
 
