@@ -1,9 +1,9 @@
 -- Theme
--- vim.g.default_colorscheme = 'xnxdark'
 vim.g.have_nerd_font = true
 
 vim.opt.background = "dark"
 vim.opt.termguicolors = true -- Set termguicolors to enable highlight groups (default: false)
+vim.cmd.colorscheme "xnxdark" -- Built-in colorscheme loading; config reapplies it every session
 
 -- Line numbers
 vim.wo.number = true -- Make line numbers default (default: false)
