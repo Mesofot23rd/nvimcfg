@@ -163,13 +163,6 @@ vim.g.loaded_netrwPlugin = 1
 -- The next globals are toggleable with <space + l + u>
 vim.g.autoformat_enabled = false -- Enable auto formatting at start.
 vim.g.autopairs_enabled = true -- Enable autopairs at start.
-vim.g.cmp_enabled = true -- Enable completion at start.
-vim.g.codeactions_enabled = true -- Enable displaying 💡 where code actions can be used.
-vim.g.codelens_enabled = true -- Enable automatic codelens refresh for lsp.
--- vim.g.diagnostics_mode = 3 -- Set code linting (0=off, 1=only show in status line, 2=virtual text off, 3=all on).
-vim.g.fallback_icons_enabled = false -- Enable it if you need to use Neovim in a machine without nerd fonts.
-vim.g.inlay_hints_enabled = false -- Enable always show function parameter names.
-vim.g.lsp_round_borders_enabled = true -- Enable round borders for lsp hover and signatureHelp.
-vim.g.lsp_signature_enabled = true -- Enable automatically showing lsp help as you write function parameters.
-vim.g.notifications_enabled = true -- Enable notifications.
-vim.g.url_hl_enabled = true -- Highlight URLs with an underline effect.
+-- vim.g.inlay_hints = false -- Enable always show function parameter names.
+-- vim.g.notifications = true -- Enable notifications.
+vim.g.url_hl = true -- Highlight URLs with an underline effect.
