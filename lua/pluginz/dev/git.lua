@@ -160,9 +160,9 @@ return {
 		lazy = true,
 		keys = {
 			{ "<leader>ga", add_file, desc = "Git add file" },
+			{ "<leader>gA", add_and_commit, desc = "Git add and commit (prompt)" },
 			{ "<leader>gc", commit_with_message, desc = "Git commit file (prompt)" },
 			{ "<leader>gC", commit_without_message, desc = "Git commit (no message)" },
-			{ "<leader>gA", add_and_commit, desc = "Git add and commit (prompt)" },
 			{ "<leader>gu", unstage_file, desc = "Git unstage file" },
 			{ "<leader>gr", restore_file, desc = "Git restore file from HEAD" },
 			{ "<leader>gd", function() fugitive_view("Git diff", "diff") end, desc = "Git diff file" },
