@@ -103,19 +103,6 @@ autocmd("FileType", {
 })
 
 ---------------------------------------------------------------------------------
--- TODO: transfer to a mapping
-----  WRAP AND CHECK FOR SPELL IN TEXT FILETYPES
----------------------------------------------------------------------------------
-vim.api.nvim_create_autocmd("FileType", {
-	group = augroup "wrap_spell",
-	pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
-	callback = function()
-		vim.opt_local.wrap = true
-		-- vim.opt_local.spell = true
-	end,
-})
-
----------------------------------------------------------------------------------
 ---- RESIZE SPLITS IF WINDOW GOT RESIZED
 ---------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd({ "VimResized" }, {
@@ -168,23 +155,6 @@ vim.api.nvim_create_autocmd("VimResized", {
 		end, 100)
 	end,
 })
-
--- vim.api.nvim_create_autocmd('InsertEnter', {
---   group = augroup 'insert_ui_perf',
---   callback = function()
---     vim.wo.cursorline = false
---     vim.wo.relativenumber = false
---     vim.wo.number = true -- keep absolute numbers
---   end,
--- })
-
--- vim.api.nvim_create_autocmd('InsertLeave', {
---   group = augroup 'insert_ui_perf',
---   callback = function()
---     vim.wo.cursorline = true
---     vim.wo.relativenumber = true
---   end,
--- })
 
 ---------------------------------------------------------------------------------
 ---- CUSTOM USER COMMANDS
