@@ -40,12 +40,12 @@ return {
 
 		-- Git
 		{
-			"<leader>gs",
+			"<leader>fgs",
 			function() require("fzf-lua").git_status { cwd = get_root() } end,
 			desc = "Git status[fzf]",
 		},
-		{ "<leader>gc", "<Cmd>FzfLua git_commits<CR>", desc = "Git commits[fzf]" },
-		{ "<leader>gb", "<Cmd>FzfLua git_branches<CR>", desc = "Git branches[fzf]" },
+		{ "<leader>fgc", "<Cmd>FzfLua git_commits<CR>", desc = "Git commit history[fzf]" },
+		{ "<leader>fgb", "<Cmd>FzfLua git_branches<CR>", desc = "Git branches[fzf]" },
 
 		-- LSP
 		-- { 'gd', '<Cmd>FzfLua lsp_definitions<CR>', desc = 'Definitions' },
