@@ -1,7 +1,6 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		-- enabled = false,
 		event = "BufReadPost",
 		opts = {
 			mode = "cursor",
@@ -56,7 +55,7 @@ return {
 			highlight = {
 				enable = true,
 				additional_vim_regex_highlighting = false,
-				disable = function(lang, buf)
+				disable = function(_, buf)
 					local max_filesize = 500 * 1024 -- 500 KB
 					local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
 					if ok and stats and stats.size > max_filesize then return true end
@@ -66,7 +65,7 @@ return {
 			matchup = {
 				enable = true,
 				enable_quotes = true,
-				disable = function(lang, buf)
+				disable = function(_, buf)
 					local max_filesize = 1000 * 1024 -- 1 MB
 					local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
 					if ok and stats and stats.size > max_filesize then return true end
