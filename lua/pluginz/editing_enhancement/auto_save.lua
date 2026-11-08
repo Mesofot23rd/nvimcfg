@@ -8,7 +8,7 @@ return {
 				dim = 0.18,
 				cleaning_interval = 1250,
 			},
-			trigger_events = { "InsertLeave", "TextChanged" },
+			trigger_events = { "TextChanged" }, --"InsertLeave",
 			condition = function(buf)
 				local fn = vim.fn
 				local utils = require "auto-save.utils.data"
