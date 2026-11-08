@@ -7,7 +7,9 @@ end
 return {
 	"ibhagwan/fzf-lua",
 	cmd = { "FzfLua" },
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	dependencies = {
+		"nvim-tree/nvim-web-devicons", --for file Icons
+	},
 
 	----------------------------------------------------------------------------------------------------------------
 	--MAPPINGS

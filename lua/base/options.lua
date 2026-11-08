@@ -161,8 +161,8 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- The next globals are toggleable with <space + l + u>
-vim.g.autoformat_enabled = false -- Enable auto formatting at start.
 vim.g.autopairs_enabled = true -- Enable autopairs at start.
--- vim.g.inlay_hints = false -- Enable always show function parameter names.
--- vim.g.notifications = true -- Enable notifications.
-vim.g.url_hl = true -- Highlight URLs with an underline effect.
+vim.g.coverage_signs_enabled = true
+vim.g.color_highlight_enabled = true
+vim.g.codelens_enabled = true
+vim.g.mason_enabled = false

@@ -12,13 +12,13 @@ return {
 		-- },
 	},
 
-	keys = {
-		{ "<leader>b", function() require("dap").toggle_breakpoint() end },
-		{ "<leader>c", function() require("dap").continue() end },
-		{ "<C-'>", function() require("dap").step_over() end },
-		{ "<C-;>", function() require("dap").step_into() end },
-		{ "<C-:>", function() require("dap").step_out() end },
-	},
+	-- keys = {
+	-- 	{ "<leader>b", function() require("dap").toggle_breakpoint() end },
+	-- 	{ "<leader>c", function() require("dap").continue() end },
+	-- 	{ "<C-'>", function() require("dap").step_over() end },
+	-- 	{ "<C-;>", function() require("dap").step_into() end },
+	-- 	{ "<C-:>", function() require("dap").step_out() end },
+	-- },
 
 	config = function()
 		local dap = require "dap"
