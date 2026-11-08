@@ -35,33 +35,19 @@ autocmd("BufReadPost", {
 })
 
 ---------------------------------------------------------------------------------
-----SESSION AND COLORSCHEME RESTORE
+----RESTORE SAVED BACKGROUND COLOR
 --------------------------------------------------------------------------------
 autocmd("UIEnter", {
-	callback = function()
-		require("custom.colorscheme_persist").load()
-		require("custom.bg_change").load_bg()
-	end,
+	callback = function() require("custom.bg_change").load_bg() end,
 })
 
 ---------------------------------------------------------------------------------
-----SAVE COLORSCHEME TO FiLE ON WHEN COLORSCHEME IS CHANGED\
-----RE-APPLY BACKGROUND COLOR ON COLORSCHEME CHANGE
+---- HELP WINDOW OPEN IN VERTICAL SPLIT
 ---------------------------------------------------------------------------------
-autocmd("ColorScheme", {
-	callback = function()
-		-- require('custom.colorscheme_persist').save_colorscheme(vim.g.colors_name)
-		require("custom.bg_change").load_bg()
-	end,
+autocmd("FileType", {
+	pattern = "help",
+	callback = function() vim.cmd "wincmd L" end,
 })
-
----------------------------------------------------------------------------------
----- HELP WINDOW LEFT
----------------------------------------------------------------------------------
--- autocmd('FileType', {
---   pattern = 'help',
---   callback = function() vim.cmd 'wincmd L' end,
--- })
 
 ---------------------------------------------------------------------------------
 ---- CLOSE THE FOLLOWING PATTERN WITH `Q`
@@ -94,26 +80,6 @@ autocmd("FileType", {
 })
 
 ---------------------------------------------------------------------------------
----- EXCLUDE SPECIAL BUFFERS FROM SESSION
----------------------------------------------------------------------------------
--- autocmd('User', {
---   pattern = 'PersistenceSavePre',
---   callback = function()
---     for _, win in ipairs(vim.api.nvim_list_wins()) do
---       local buf = vim.api.nvim_win_get_buf(win)
-
---       -- local buftype = vim.api.nvim_get_option_value('buftype', { buf = 0 })
---       -- return buftype == 'terminal'
-
---       local ft = vim.api.nvim_get_option_value('filetype', { buf = buf })
---       local ft_exclude =
---         { 'neo-tree', 'aerial', 'trouble', 'qf', 'help', 'lazy', 'man', 'lspinfo', 'notify', 'terminal' }
---       if vim.tbl_contains(ft_exclude, ft) then vim.api.nvim_win_close(win, true) end
---     end
---   end,
--- })
-
----------------------------------------------------------------------------------
 ---- C/C++ HEADER TOGGLE
 ---------------------------------------------------------------------------------
 autocmd("FileType", {
@@ -131,7 +97,6 @@ autocmd("FileType", {
 ---------------------------------------------------------------------------------
 ---- DISABLE AUTO-COMMENT ON NEW LINE
 ---------------------------------------------------------------------------------
-
 autocmd("FileType", {
 	pattern = "*",
 	callback = function() vim.opt_local.formatoptions:remove { "r", "o" } end,
@@ -139,7 +104,7 @@ autocmd("FileType", {
 
 ---------------------------------------------------------------------------------
 -- TODO: transfer to a mapping
-----  wrap and check for spell in text filetypes
+----  WRAP AND CHECK FOR SPELL IN TEXT FILETYPES
 ---------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd("FileType", {
 	group = augroup "wrap_spell",
@@ -151,7 +116,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 ---------------------------------------------------------------------------------
----- resize splits if window got resized
+---- RESIZE SPLITS IF WINDOW GOT RESIZED
 ---------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd({ "VimResized" }, {
 	group = augroup "resize_splits",
@@ -170,7 +135,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 })
 
 ---------------------------------------------------------------------------------
----- -- Highlight on yank
+---- HIGHLIGHT ON YANK
 ---------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = augroup "highlight_yank",
@@ -231,9 +196,9 @@ vim.api.nvim_create_user_command(
 	{ desc = "Select Background Color" }
 )
 
--- COLORSCHEME SELECT
+-- COLORSCHEME SELECT (current session only; startup theme is set in base.options)
 vim.api.nvim_create_user_command(
 	"Cp",
-	function() require("custom.colorscheme_persist").colorscheme_picker() end,
+	function() require("fzf-lua").colorschemes { winopts = { height = 0.5, width = 0.5 } } end,
 	{ desc = "Select ColorScheme" }
 )
