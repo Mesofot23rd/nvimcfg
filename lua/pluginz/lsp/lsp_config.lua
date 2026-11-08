@@ -13,20 +13,13 @@ return {
 				vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = "LSP: " .. desc })
 			end
 
-			map("n", "gd", vim.lsp.buf.type_definition, "[G]oto [D]definition")
-			map("n", "gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-			map("n", "gr", vim.lsp.buf.references, "[r]oto [R]eferences")
-			map("n", "gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-
-			map("n", "<leader>lD", vim.lsp.buf.type_definition, "Type [D]definition")
-			map("n", "<leader>lr", vim.lsp.buf.rename, "[R]ename")
-			map("n", "<leader>la", vim.lsp.buf.code_action, "[A]ction")
+			map("n", "<leader>ld", vim.lsp.buf.type_definition, "definition")
+			map("n", "<leader>lD", vim.lsp.buf.declaration, "Declaration")
+			map("n", "<leader>lR", vim.lsp.buf.references, "References")
+			map("n", "<leader>lI", vim.lsp.buf.implementation, "Implementation")
+			map("n", "<leader>lr", vim.lsp.buf.rename, "Rename")
+			map("n", "<leader>la", vim.lsp.buf.code_action, "Action")
 			map("n", "<leader>lh", vim.lsp.buf.hover, "Hover Documentation")
-
-			-- vim.lsp.loclist
-
-			map("n", "}", function() require("base.utils.lsp_symbols_nav").goto_symbol(true) end, "Next document symbol")
-			map("n", "{", function() require("base.utils.lsp_symbols_nav").goto_symbol(false) end, "Previous document symbol")
 		end
 
 		-- List of servers to setup (following prompt.txt table)
