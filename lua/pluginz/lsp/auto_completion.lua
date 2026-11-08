@@ -1,31 +1,3 @@
-local kind_icons = {
-	Text = "󰉿",
-	Method = "m",
-	Function = "󰊕",
-	Constructor = "",
-	Field = "",
-	Variable = "󰆧",
-	Class = "󰌗",
-	Interface = "",
-	Module = "",
-	Property = "",
-	Unit = "",
-	Value = "󰎠",
-	Enum = "",
-	Keyword = "󰌋",
-	Snippet = "",
-	Color = "󰏘",
-	File = "󰈙",
-	Reference = "",
-	Folder = "󰉋",
-	EnumMember = "",
-	Constant = "󰇽",
-	Struct = "",
-	Event = "",
-	Operator = "󰆕",
-	TypeParameter = "󰊄",
-}
-
 return {
 	{ -- Autocompletion
 		"saghen/blink.cmp",
@@ -51,7 +23,7 @@ return {
 						"rafamadriz/friendly-snippets",
 						config = function() require("luasnip.loaders.from_vscode").lazy_load() end,
 					},
-					"giuxtaposition/blink-cmp-copilot",
+					-- "giuxtaposition/blink-cmp-copilot",
 				},
 				opts = {},
 			},
@@ -77,7 +49,6 @@ return {
 
 				-- See :h blink-cmp-config-keymap for defining your own keymap
 				preset = "default",
-
 				["<CR>"] = { "accept", "fallback" },
 				-- ["<Tab>"] = { "insert_next" },
 				-- ["<S-Tab>"] = { "insert_prev" },
@@ -100,6 +71,7 @@ return {
 				-- Optionally, set `auto_show = true` to show the documentation after a delay.
 				documentation = { auto_show = false, auto_show_delay_ms = 500 },
 				-- ghost_text = { enabled = true },
+				list = { selection = { preselect = false } },
 				menu = {
 					draw = {
 						columns = {
@@ -111,14 +83,17 @@ return {
 			},
 
 			sources = {
-				default = { "lsp", "path", "snippets", "lazydev" },
+				default = { "lsp", "path", "snippets", "lazydev", "buffer" },
 				providers = {
 					lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
 				},
 			},
+
 			cmdline = {
 				keymap = { preset = "inherit" },
 				completion = {
+					list = { selection = { preselect = false } },
+
 					menu = {
 						auto_show = true,
 						draw = {
