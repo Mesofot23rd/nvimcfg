@@ -4,6 +4,10 @@ return {
 	"folke/trouble.nvim",
 	cmd = "Trouble",
 	keys = {
+
+		-- { "}", require("trouble").next(), desc = "Next Trouble Item" },
+		-- { "{", require("trouble").prev(), desc = "Prev Trouble Item" },
+
 		{ "<leader>xD", "<Cmd>Trouble diagnostics toggle<CR>", desc = "Diagnostics" },
 		{
 			"<leader>xd",
@@ -26,15 +30,9 @@ return {
 			desc = "Quickfix List (Trouble)",
 		},
 		{ "<leader>xs", "<cmd>Trouble symbols toggle<cr>", desc = "Symbols (Trouble)" },
-		-- { "<leader>xt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
-		-- {
-		-- 	"<leader>xT",
-		-- 	"<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>",
-		-- 	desc = "Todo/Fix/Fixme (Trouble)",
-		-- },
 	},
-	opts = {
 
+	opts = {
 		win = {
 			type = "split",
 			relative = "editor",
