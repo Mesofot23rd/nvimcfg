@@ -2,17 +2,29 @@ return {
 	"mfussenegger/nvim-dap",
 	event = "VeryLazy",
 	dependencies = {
-		"rcarriga/nvim-dap-ui",
+		"rcarriga/nvim-dap-ui", --provides a clean Ui for debugging
 		"nvim-neotest/nvim-nio",
-		"theHamsta/nvim-dap-virtual-text",
+		"theHamsta/nvim-dap-virtual-text", ---display the debug adapter’s information right inside your code.
+		-- {
+		-- 	"microsoft/vscode-js-debug",
+		-- 	version = "1.x",
+		-- 	build = "npm i && npm run compile vsDebugServerBundle && mv dist out",
+		-- },
+	},
+
+	keys = {
+		{ "<leader>b", function() require("dap").toggle_breakpoint() end },
+		{ "<leader>c", function() require("dap").continue() end },
+		{ "<C-'>", function() require("dap").step_over() end },
+		{ "<C-;>", function() require("dap").step_into() end },
+		{ "<C-:>", function() require("dap").step_out() end },
 	},
 
 	config = function()
-		-- Mobile-optimized DAP configuration
 		local dap = require "dap"
 		local dapui = require "dapui"
 
-		-- Python debugging
+		-- Python debug configuration
 		dap.adapters.python = {
 			type = "executable",
 			command = "python",
@@ -29,6 +41,7 @@ return {
 			},
 		}
 
+		-- DAPUI CONFIGURATION
 		dapui.setup {
 			icons = { expanded = "▾", collapsed = "▸", current_frame = "▸" },
 			mappings = {
