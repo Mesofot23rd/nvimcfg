@@ -1,28 +1,27 @@
 return {
-  'ouuan/nvim-bigfile',
-  opts = {},
-  config = function()
-    require('bigfile').setup {
-      -- Default size limit in bytes
-      size_limit = 1 * 1024 * 1024, -- 1`MB
+	"ouuan/nvim-bigfile",
+	opts = {},
+	config = function()
+		require("bigfile").setup {
+			-- Default size limit in bytes
+			size_limit = 1 * 1024 * 1024, -- 1`MB
 
-      -- Per-filetype size limits
-      ft_size_limits = {
-        -- javascript = 100 * 1024, -- 100KB for javascript files
-      },
+			-- Per-filetype size limits
+			ft_size_limits = {
+				-- javascript = 100 * 1024, -- 100KB for javascript files
+			},
 
-      -- Show notifications when big files are detected
-      notification = true,
+			notification = true, -- Show notifications when big files are detected
 
-      -- Enable basic syntax highlighting (not TreeSitter) for big files
-      -- (tips: it will be automatically disabled if too slow)
-      syntax = true,
+			-- Enable basic syntax highlighting (not TreeSitter) for big files
+			-- (tips: it will be automatically disabled if too slow)
+			syntax = true,
 
-      -- Custom additional hook function to run when big files are detected
-      hook = nil,
-      -- hook = function(buf, ft)
-      --   vim.b.minianimate_disable = true
-      -- end,
-    }
-  end,
+			-- Custom additional hook function to run when big files are detected
+			hook = nil,
+			-- hook = function(buf, ft)
+			--   vim.b.minianimate_disable = true
+			-- end,
+		}
+	end,
 }
