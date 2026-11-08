@@ -37,63 +37,63 @@
 
 local ToggleOption = {}
 
-local function describe(spec) return spec.get() and ('Disable ' .. spec.title) or ('Enable ' .. spec.title) end
+local function describe(spec) return spec.get() and ("Disable " .. spec.title) or ("Enable " .. spec.title) end
 
 --- Create and register a toggleable option.
 --- @param spec scratch.ToggleOption.Spec
 --- @return scratch.ToggleOption
 function ToggleOption.new(spec)
-  assert(type(spec) == 'table', 'ToggleOption.new: spec must be a table')
-  assert(type(spec.map) == 'string' and spec.map ~= '', 'ToggleOption.new: spec.map is required')
-  assert(type(spec.title) == 'string', 'ToggleOption.new: spec.title is required')
-  assert(type(spec.get) == 'function', 'ToggleOption.new: spec.get is required')
-  assert(type(spec.set) == 'function', 'ToggleOption.new: spec.set is required')
+	assert(type(spec) == "table", "ToggleOption.new: spec must be a table")
+	assert(type(spec.map) == "string" and spec.map ~= "", "ToggleOption.new: spec.map is required")
+	assert(type(spec.title) == "string", "ToggleOption.new: spec.title is required")
+	assert(type(spec.get) == "function", "ToggleOption.new: spec.get is required")
+	assert(type(spec.set) == "function", "ToggleOption.new: spec.set is required")
 
-  local mode = spec.mode or 'n'
-  local self = {}
+	local mode = spec.mode or "n"
+	local self = {}
 
-  function self:get() return spec.get() end
+	function self:get() return spec.get() end
 
-  function self:set(state)
-    spec.set(state)
-    if spec.notify == false then return end
-    local msg = spec.get() and (spec.title .. ' Enabled') or (spec.title .. ' Disabled')
-    vim.notify(msg, vim.log.levels.INFO, { key = spec.title })
-  end
+	function self:set(state)
+		spec.set(state)
+		if spec.notify == false then return end
+		local msg = spec.get() and (spec.title .. " Enabled") or (spec.title .. " Disabled")
+		vim.notify(msg, vim.log.levels.INFO, { key = spec.title })
+	end
 
-  function self:toggle() self:set(not spec.get()) end
+	function self:toggle() self:set(not spec.get()) end
 
-  vim.keymap.set(mode, spec.map, function() self:toggle() end, {
-    desc = describe(spec),
-    buffer = spec.buffer,
-    silent = spec.silent,
-  })
+	vim.keymap.set(mode, spec.map, function() self:toggle() end, {
+		desc = describe(spec),
+		buffer = spec.buffer,
+		silent = spec.silent,
+	})
 
-  -- which-key's function desc is re-evaluated on every popup, so the label
-  -- tracks the live state without any autocmd. `real = true` drops the
-  -- entry from the popup automatically if the underlying keymap is gone
-  -- (e.g. nothing replaced this global when LSP detaches a buffer-local).
-  --
-  -- The defer is needed because spec files under `scratch.plugins/` evaluate
-  -- alphabetically during lazy.setup(); files starting with letters before
-  -- "w" run before lazy registers which-key.nvim, so require("which-key")
-  -- fails right now. Scheduling postpones the call to the next event-loop
-  -- tick, after lazy.setup() has finished registering every spec.
-  vim.schedule(function()
-    pcall(function()
-      require('which-key').add {
-        {
-          spec.map,
-          mode = mode,
-          desc = function() return describe(spec) end,
-          buffer = spec.buffer,
-          real = true,
-        },
-      }
-    end)
-  end)
+	-- which-key's function desc is re-evaluated on every popup, so the label
+	-- tracks the live state without any autocmd. `real = true` drops the
+	-- entry from the popup automatically if the underlying keymap is gone
+	-- (e.g. nothing replaced this global when LSP detaches a buffer-local).
+	--
+	-- The defer is needed because spec files under `scratch.plugins/` evaluate
+	-- alphabetically during lazy.setup(); files starting with letters before
+	-- "w" run before lazy registers which-key.nvim, so require("which-key")
+	-- fails right now. Scheduling postpones the call to the next event-loop
+	-- tick, after lazy.setup() has finished registering every spec.
+	vim.schedule(function()
+		pcall(function()
+			require("which-key").add {
+				{
+					spec.map,
+					mode = mode,
+					desc = function() return describe(spec) end,
+					buffer = spec.buffer,
+					real = true,
+				},
+			}
+		end)
+	end)
 
-  return self
+	return self
 end
 
 return ToggleOption
